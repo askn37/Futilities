@@ -17,20 +17,20 @@
 #define CONSOLE_BAUD 9600
 
 void setup (void) {
-	while (!Serial);
+    while (!Serial);
     Serial.begin(CONSOLE_BAUD);
-	Serial.println(F("Startup"));
+    Serial.println(F("Startup"));
 }
 
 void loop (void) {
-	uint16_t vcc = getVcc();
+    uint16_t vcc = getVcc();
 
-	Serial.print(F("Vcc: "));
-	Serial.print(vcc / 1000.0);
-	Serial.print(F(" volt"));
-	Serial.println();
+    Serial.print(F("Vcc: "));
+    Serial.print(vcc / 1000.0);
+    Serial.print(F(" volt"));
+    Serial.println();
 
-	delay(5000);
+    delay(5000);
 }
 
 // end of code

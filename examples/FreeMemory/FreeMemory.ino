@@ -19,13 +19,13 @@
 void setup (void) {
     Serial.begin(CONSOLE_BAUD);
 
-	Serial.print(F("memFreeSize: "));
+    Serial.print(F("memFreeSize: "));
 
-	size_t freeSize = memFreeSize();
+    size_t freeSize = memFreeSize();
 
-	Serial.print(freeSize, DEC);
+    Serial.print(freeSize, DEC);
 
-	Serial.println(F(" bytes"));
+    Serial.println(F(" bytes"));
 }
 
 void loop (void) {
