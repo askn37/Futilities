@@ -1,0 +1,25 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+halt	KEYWORD2
+wdtStart	KEYWORD2
+wdtStop	KEYWORD2
+wdtEnable	KEYWORD2
+wdtDisable	KEYWORD2
+wdtReset	KEYWORD2
+wdtAttach	KEYWORD2
+reboot	KEYWORD2
+
+memFreeSize	KEYWORD2
+
+getVcc	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
