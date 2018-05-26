@@ -15,7 +15,7 @@
 size_t memFreeSize (void) {
     uint8_t *_heapptr, *_stackptr;
     _heapptr = (uint8_t*)malloc(4);         // use stackptr temporarily
-	if (_heapptr == NULL) return (0);
+    if (_heapptr == NULL) return (0);
     free(_heapptr);                         // free up the memory again
     _stackptr = (uint8_t*)(SP);             // save value of stack pointer
     return (_stackptr - _heapptr);
