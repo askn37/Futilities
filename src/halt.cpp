@@ -13,7 +13,7 @@
 #include "halt.h"
 
 volatile uint8_t __wdt_count = 0;
-static volatile void __wdt_vect_empty (void) { __wdt_count++; }
+volatile void __wdt_vect_empty (void) { __wdt_count++; }
 volatile void (*__wdt_vect)(void);
 ISR(WDT_vect) { __wdt_vect(); }
 // uint8_t getWdtCount (void) { return __wdt_count; }
@@ -61,8 +61,8 @@ void reboot (void) {
     while (true);
 }
 
-void wdtAttach (volatile void(*callback)(void)) {
-    __wdt_vect = callback;
+void wdtAttachInterrupt (void(*callback)(void)) {
+    __wdt_vect = callback != NULL ? (volatile void (*)(void)) callback : (volatile void (*)(void)) __wdt_vect_empty;
 }
 
 // end of code

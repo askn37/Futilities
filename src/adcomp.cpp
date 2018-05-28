@@ -18,19 +18,20 @@ uint16_t getVcc (void) {
     // ATmega1284P REFS AVCC - MUX 1.1V
     adcSetup( _BV(REFS0) | _BV(MUX4) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1) );
     #else
+    // ATmega32U4
     // ATmega328P REFS AVCC - MUX 1.1V
     adcSetup( _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1) );
     #endif
     for (int n = 0; n < 20; n++){
         rawVcc += adc();
     }
-    return 22528000 / rawVcc;		// 1.1 * 2048.0 * 10000
+    return 22528000 / rawVcc;		// 1.1 * 1024.0 * 20.0 * 1000.0
 }
 
 void adcSetup (uint8_t data) {
     ADMUX = data;
     ADCSRA |= _BV(ADEN);
-    ADCSRA |= 0x07;				// CK/128(Hz)
+    ADCSRA |= 0x07;				    // CK/128(Hz)
     delayMicroseconds(1000);
 }
 

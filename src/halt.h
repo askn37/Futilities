@@ -40,17 +40,11 @@ __asm__ __volatile__ (  \
 #define wdtReset()          wdt_reset()
 
 bool _halt (void);
-static volatile void __wdt_vect_empty (void);
-extern "C" volatile void (*__wdt_vect)(void);
 extern "C" void reboot (void);
-extern "C" void wdtAttach (volatile void(*)(void) = __wdt_vect_empty);
-// extern "C" uint8_t getWdtCount (void);
+extern "C" void wdtAttachInterrupt (void(*)(void) = NULL);
+extern "C" inline void wdtDetachInterrupt (void) { return wdtAttachInterrupt(NULL); };
 
-#if defined(BODS) && defined(BODSE)
 extern "C" uint16_t halt (uint16_t = 0, uint8_t = SLEEP_MODE_PWR_DOWN);
-#else
-extern "C" uint16_t halt (uint16_t = 0, uint8_t = SLEEP_MODE_IDLE);
-#endif
 
 #endif
 

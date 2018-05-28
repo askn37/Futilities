@@ -18,11 +18,18 @@
 
 ```c
 // まとめて全部
+#include <Arduino.h>
 #include <Futilities.h>
 
-// あるいは必要な部分だけ
+// あるいは必要なヘッダファイルだけ
 #include <halt.h>
+#include <memstat.h>
+#include <adcomp.h>
+#include <pcintvect.h>
+#include <gpio.h>
 ```
+
+# リファレンス
 
 ## halt.h
 
@@ -33,11 +40,7 @@ WDT_vect 応用ツール集。
 <avr/sleep.h>
 
 注意：
-UNO（ATmega328P）および Boubino（ATmega1284P）等向けである。
-Leonardo（ATmega32U4）等の USB-UART標準内臓系列では
-コンパイルはできるものの期待したとおりには動作しない。
-halt() は USB-UART を停止しないと正しく休止状態に入れない。
-reboot() 後は USB-UART が正しく再初期化されない。etc.
+Leonardo（ATmega32U4）等の USB-UART内臓型では期待したとおりには動作しない。
 
 ### uint16\_t halt (uint16\_t SECONDS = 0, uint8_t MODE = SLEEP_MODE_PWR_DOWN)
 
@@ -80,25 +83,34 @@ MCU（AVR）を直ちに MCUデバイスのリセットする。
 reboot();
 ```
 
-### void wdtAttach (volatile void(*CALLBACK)(void))
+### void wdtAttachInterrupt (void(*CALLBACK)(void) = NULL)
 
-WDT_vect にユーザ定義割込ルーチンをセットする。
+WDT_vect にユーザ定義割込ルーチンを割り当てる。
 
 ```c
 // #include <halt.h>
 
 volatile uint16_t wdt_count = 0;
-volatile void ISR_wdt (void) {
+void ISR_wdt (void) {
     wdt_count++;
 }
-wdtAttach(ISR_wdt);
+wdtAttachInterrupt(ISR_wdt);
 wdtStart(WDTO_1S);
 ```
 
 halt() 実行中以外は WDT_vect タイマーは使用されていないため、ユーザレベルで使用しても構わない。
 このエントリは（halt.hで定義された）真の WDT_vect から call される。
 ただし halt() を実行するたびにこの指定は上書きされて失われるので、
-wdtAttach() は逐次実行する必要がある。
+wdtAttachInterrupt() は逐次実行する必要がある。
+
+引数に NULL を指定する（あるいは省略する）と wdtDetachInterrupt() と同義となる。
+
+### void wdtDetachInterrupt (void)
+
+wdtAttachInterrupt() で割り当てたユーザ定義割込ルーチンを取り消す。
+Watchdog Timer は停止しない。
+単に halt() が使用するデフォルト割込に戻されるだけである。
+さらに言えば wdtAttachInterrupt(NULL) と同義である。
 
 ### void wdtStart (uint8\_t WDTO)
 
@@ -193,21 +205,114 @@ Serial.print(vcc / 1000.0);
 一部の MCUが持つ内臓温度計の測定値を返す。
 （未実装）
 
-# 既知の不具合／制約／課題
+## pcintvect.h
+
+PCINT割込補助
+
+依存性：
+
+注意：
+SoftwareSerial とは併用できない。
+
+### void attachPCInterrupt (uint8_t interruptPin, void (*userFunc)(void) = NULL)
+
+指定のピンに対応する外部ピン変化割込を有効にし、
+指定のユーザー定義ルーチンを割込ベクタに割り付ける。
+
+通常の attachInterrupt() と違って、第1引数にはピン番号を直接記述する。
+また割込種別は EDGE しかないため、第3引数はない。
+第2引数の割込ベクタは同一ポートグループに属する各最大8本のピンで共有され、
+個々のピンに個別に割り当てるものではないことに注意すること。
+
+MCU休止状態の解除のように、割込発生の事実だけを利用して割込処理が不要であるなら、第2引数には NULLを指定する。
+
+割込ベクタ（ポートグループ）は PCINT0からPCINT3の最大4つがあるが、
+MCUの品種によってピン割付定義が異なる。
+また Arduino の表向きのピン番号とも一致しない。
+
+|MCU|PCINT0|PCINT1|PCINT2|PCINT3|品種|
+|---|---|---|---|---|---|
+|ATmega328P|8 9 10 11 12 13|A0 A1 A2 A3 A4 A5 (A6 A7)|0 1 2 3 4 5 6 7|---|UNO ProMini|
+|ATmega32U4|8 9 10 11 (14 15 16 17)|---|---|---|Leonardo ProMicro|
+|ATmega1284P|A0 A1 A2 A3 A4 A5 A6 A7|4 5 6 7 10 11 12 13|22 23 24 25 26 27 28 29|0 1 2 3 8 9 30 31|Boubino|
+
+いくつかのピンは、attachInterrupt() での割込指定と独立して共存する。
+あるいは HardwareSerial や SPI や I2C の割込とも独立して共存する。
+つまりそれらの専用機能割込とは全く別に、干渉せずに使用できる。
+
+例えば HardwareSerial は MCUが休止中は割込を発生しないが、
+外部ピン変化割込は検出され、休止状態を解除させることができる。
+両方を併用することで MCUを適切な省電力状態に置くことができる。
+個々の割込でのピン状態（HIGH・LOW、あるいは立ち上がり・立ち下がり変化）はソフトウェアで判断しなければできないが、
+休止状態解除目的に限ればそういった処理は省略可能である。
+
+ポートグループ内のどのピンが割込発生要因になったかを判断するのは難しい。
+だが異なるポートグループの単一のピンに限って使用するのであれば、
+そのピンのHIGH・LOW変化だけを調べれば良いので単純であるし、
+普通はそのようにして使うだろう。
+（SoftwareSerial はまさにそのようにして外部ピン変化割込を利用している）
+
+### void detachPCInterrupt (uint8_t interruptPin)
+
+指定のピンに対応するPCINT割込を解除する。
+対応するポートグループの割込ベクタも解除される。
+
+## gpio.h
+
+GPIO関係
+
+依存性：
+
+### void digitalToggle (uint8_t outputPin)
+
+指定のピンの出力をトグル変化する。
+ピンが OUTPUT に指定されているなら HIGH と LOW を、
+INPUT に指定されているならプルアップ抵抗の ON と OFF を切り替える。
+
+## hexdigit.h
+
+16進文字変換
+
+依存性：
+
+### uint8_t dtoh (const uint8_t dint)
+
+引数の下位 4bitに対応する ASCII文字を返す。
+
+### uint8_t htod (const uint8_t hchar)
+
+16進数を表す ASCII文字の引数に対応する 4bitの正数を返す。
+
+## bitsconv.h
+
+表示用途ビット変換
+
+依存性：
+<avr/pgmspace.h>
+
+### uint16_t wbits (const uint8_t bits)
+
+8bitの引数に対応する 16bitの "倍角" ビットパターンを返す。
+
+### uint8_t rbits (const uint8_t bits)
+
+8bitの引数に対応する 8bitの "鏡対称" ビットパターンを返す。
+
+## 既知の不具合／制約／課題
 
 - 主要な AVR 以外はテストされていない。
 - 古い Arduino IDE には対応しない。1.8.5で動作確認。少なくとも C++11 は使えなければならない。
 - 英文マニュアルが未整備である。
 
-# 改版履歴
+## 改版履歴
 
 - 0.1.1
 
-# 使用許諾
+## 使用許諾
 
 MIT
 
-# 著作表示
+## 著作表示
 
 朝日薫 / askn
 (SenseWay Inc.)
