@@ -27,6 +27,7 @@
 #include <adcomp.h>
 #include <pcintvect.h>
 #include <gpio.h>
+#include <IntervalEvent.h>
 ```
 
 # リファレンス
@@ -297,6 +298,53 @@ INPUT に指定されているならプルアップ抵抗の ON と OFF を切�
 ### uint8_t rbits (const uint8_t bits)
 
 8bitの引数に対応する 8bitの "鏡対称" ビットパターンを返す。
+
+## IntervalEvent.h
+
+タイマー非依存定期実行イベントクラス
+
+依存性：
+<stdlib.h>
+
+```c
+#include <IntervalEvent.h>
+
+IntervalEvent event;
+
+void setup (void) {
+  event.setTimeout(oneShotEvent, 2000);
+  event.setInterval(repeatEvent, 200);
+}
+
+void loop (void) {
+  event.yield();
+}
+```
+
+待機イベントキューは malloc()、realloc()、free() で実装されている。
+登録イベント数には空きメモリがある限り上限はない。
+
+### IntervalEvent (void)
+
+コンストラクタ。
+
+### int setInterval (void (*userFunc)(void), uint32_t interval)
+
+intervalミリ秒間隔で定期実行するイベントを作成し、成功ならイベントIDを返す。
+
+### int setTimeout (void (*userFunc)(void), uint32_t interval)
+
+intervalミリ秒後に一度だけ実行するイベントを作成し、成功ならイベントIDを返す。
+
+### bool clear (int eventId)
+
+イベントIDを指定し、そのイベントを取り消す。
+イベントが存在しなければ偽を返す。
+
+### bool yield (int eventId = 0)
+
+所定の時間を経過していたらイベントを実行する。
+引数にイベントIDを指定した場合は、そのイベントが実行された場合に真を返す。
 
 ## 既知の不具合／制約／課題
 

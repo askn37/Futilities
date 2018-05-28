@@ -2,6 +2,8 @@
 # Datatypes (KEYWORD1)
 #######################################
 
+IntervalEvent	KEYWORD1
+
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
@@ -24,6 +26,17 @@ attachPCInterrupt	KEYWORD2
 detachPCInterrupt	KEYWORD2
 
 digitalToggle	KEYWORD2
+
+dtoh	KEYWORD2
+htod	KEYWORD2
+
+wbits	KEYWORD2
+rbits	KEYWORD2
+
+setInterval	KEYWORD2
+setTimeout	KEYWORD2
+clear	KEYWORD2
+yield	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

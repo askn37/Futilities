@@ -20,6 +20,7 @@
 #include "gpio.h"
 #include "hexdig.h"
 #include "bitsconv.h"
+#include "IntervalEvent.h"
 
 #endif
 
