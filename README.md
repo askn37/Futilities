@@ -330,11 +330,11 @@ void loop (void) {
 
 ### int setInterval (void (*userFunc)(void), uint32_t interval)
 
-intervalミリ秒間隔で定期実行するイベントを作成し、成功ならイベントIDを返す。
+intervalミリ秒間隔で定期実行するイベントを作成し、成功ならイベントID（常に真）を返す。
 
 ### int setTimeout (void (*userFunc)(void), uint32_t interval)
 
-intervalミリ秒後に一度だけ実行するイベントを作成し、成功ならイベントIDを返す。
+intervalミリ秒後に一度だけ実行するイベントを作成し、成功ならイベントID（常に真）を返す。
 
 ### bool clear (int eventId)
 

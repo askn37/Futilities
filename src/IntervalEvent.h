@@ -21,13 +21,13 @@ private:
 		uint32_t interval;
 		uint32_t ms;
 		int id;
-		int timeout;
+		bool timeout;
 		void (*event)(void);
 	} interval_t;
 
 	interval_t *eventList;
 	int items = 0;
-	int serial = 0;
+	int serial = 1;
 
 public:
 	IntervalEvent (void) { items = 0; eventList = (interval_t*) malloc(4); }
