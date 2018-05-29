@@ -27,7 +27,7 @@ private:
 
     interval_t *_eventList;
     uint32_t _timeup;
-    uint32_t _ms;
+    uint32_t _ms = 0;
     int _items = 0;
     int _serial = 1;
 
@@ -42,9 +42,9 @@ public:
     bool clear (int);
     bool yield (int = 0);
 
-    bool timeout (uint32_t = 0);
-    inline bool timeup (void) { return !timeout(); }
-    inline bool setTimelimit (uint32_t interval) { return timeout(interval); }
+    bool intime (uint32_t = 0);
+    inline bool timeup (void) { return !intime(); }
+    inline bool setTimelimit (uint32_t interval) { return intime(interval); }
 };
 
 #endif

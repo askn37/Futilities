@@ -66,7 +66,7 @@ bool IntervalEvent::yield (int eventId) {
     return false;
 }
 
-bool IntervalEvent::timeout (uint32_t interval) {
+bool IntervalEvent::intime (uint32_t interval) {
     if (interval) {
         _ms = interval;
         _timeup = millis();

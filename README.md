@@ -384,12 +384,15 @@ intervalミリ秒後に一度だけ実行するイベントを作成し、成功
 ### bool setTimelimit (uint32_t interval)
 
 タイムアップ・イベントの実行時間を intervalミリ秒で設定する。
+常に真を返す。
 このタイムアップ・イベントはクラスオブジェクトひとつにつき、ひとつだけ存在する。
 
 ### bool timeup (void)
 
 setTimelimit() で設定した時間を経過していれば真を返す。
-timeout() とは返値の真偽が逆である。
+intime() とは返値の真偽が逆である。
+また真偽値が変化するのは一度だけである。
+（イベントがすでに終了していれば偽を返す）
 
 ```c
 // Arduinoスケッチで言えば
@@ -397,20 +400,21 @@ void setup (void) {
   event.setTimelimit(1000);
 }
 void loop (void) {
-  if (event.timeup()) return;   // Time up
+  if (event.timeup()) return;   // Time up (One Shot)
   ;;;
 }
 ```
 
-### bool timeout (void)
+### bool intime (void)
 
 setTimelimit() で設定した時間に達していなければ真を返す。
 timeup() とは返値の真偽が逆である。
+また真偽値が変化するのは一度だけである。
+（イベントがすでに終了していれば真を返す）
 
 ```c
 event.setTimelimit(1000);
-
-while (event.timeout()) {
+while (event.intime()) {
   yield();                  // 1000ms過ぎるまで何度でも実行される
 }
 ```
@@ -425,6 +429,7 @@ while (event.timeout()) {
 
 - 0.1.2
   - digitalToggle() を雑用マクロに変更。
+  - IntervalEvent.h にタイムアップ・イベントを追加。
 
 ## 使用許諾
 
