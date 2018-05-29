@@ -12,7 +12,7 @@
 #include <Arduino.h>
 #include "IntervalEvent.h"
 
-int IntervalEvent::setInterval (void (*userFunc)(void), uint32_t interval) {
+int IntervalEvent::setInterval (void (*userFunc)(void), uint32_t interval, bool oneshot) {
     // Search for unique new id
     serial += 2;
     for (int i = 0; i < items; i++) {
@@ -28,16 +28,10 @@ int IntervalEvent::setInterval (void (*userFunc)(void), uint32_t interval) {
     items++;
     eventList[idx].interval = interval;
     eventList[idx].ms = millis();
-    eventList[idx].timeout = false;
+    eventList[idx].timeout = oneshot;
     eventList[idx].id = serial;
     eventList[idx].event = userFunc;
     return eventList[idx].id;
-}
-
-int IntervalEvent::setTimeout (void (*userFunc)(void), uint32_t interval) {
-    int eventId = this->setInterval(userFunc, interval);
-    if (eventId) eventList[items - 1].timeout = true;
-    return eventId;
 }
 
 bool IntervalEvent::clear (int eventId) {

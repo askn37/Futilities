@@ -13,11 +13,11 @@
 #define __FUTILITIES_H
 
 #include <Arduino.h>
+#include "chore.h"
 #include "halt.h"
 #include "memstat.h"
 #include "adcomp.h"
 #include "pcintvect.h"
-#include "gpio.h"
 #include "hexdig.h"
 #include "bitsconv.h"
 #include "IntervalEvent.h"

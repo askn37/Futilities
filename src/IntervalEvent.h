@@ -33,8 +33,10 @@ public:
     IntervalEvent (void) { items = 0; eventList = (interval_t*) malloc(4); }
     ~IntervalEvent (void) { free(eventList); }
 
-    int setInterval (void (*userFunc)(void), uint32_t interval);
-    int setTimeout (void (*userFunc)(void), uint32_t interval);
+    int setInterval (void (*)(void), uint32_t, bool = false);
+    inline int setTimeout (void (*userFunc)(void), uint32_t interval) {
+        return setInterval(userFunc, interval, true); 
+    }
     bool clear (int eventId);
 
     bool yield (int eventId = 0);

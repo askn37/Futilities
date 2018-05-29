@@ -22,19 +22,32 @@
 #include <Futilities.h>
 
 // あるいは必要なヘッダファイルだけ
+#include <chore.h>
 #include <halt.h>
 #include <memstat.h>
 #include <adcomp.h>
 #include <pcintvect.h>
-#include <gpio.h>
 #include <IntervalEvent.h>
 ```
 
 # リファレンス
 
+## chore.h
+
+雑用マクロ
+
+依存性：
+
+### digitalToggle (outputPin)
+
+マクロ：
+指定のピンの出力をトグル変化する。
+ピンが OUTPUT に指定されているなら HIGH と LOW を、
+INPUT に指定されているならプルアップ抵抗の ON と OFF を切り替える。
+
 ## halt.h
 
-WDT_vect 応用ツール集。
+WDT_vect 応用
 
 依存性：
 <avr/wdt.h>
@@ -93,7 +106,7 @@ WDT_vect にユーザ定義割込ルーチンを割り当てる。
 
 volatile uint16_t wdt_count = 0;
 void ISR_wdt (void) {
-    wdt_count++;
+  wdt_count++;
 }
 wdtAttachInterrupt(ISR_wdt);
 wdtStart(WDTO_1S);
@@ -208,7 +221,7 @@ Serial.print(vcc / 1000.0);
 
 ## pcintvect.h
 
-PCINT割込補助
+PCINT割込
 
 依存性：
 
@@ -258,18 +271,6 @@ MCUの品種によってピン割付定義が異なる。
 指定のピンに対応するPCINT割込を解除する。
 対応するポートグループの割込ベクタも解除される。
 
-## gpio.h
-
-GPIO関係
-
-依存性：
-
-### void digitalToggle (uint8_t outputPin)
-
-指定のピンの出力をトグル変化する。
-ピンが OUTPUT に指定されているなら HIGH と LOW を、
-INPUT に指定されているならプルアップ抵抗の ON と OFF を切り替える。
-
 ## hexdigit.h
 
 16進文字変換
@@ -279,10 +280,26 @@ INPUT に指定されているならプルアップ抵抗の ON と OFF を切�
 ### uint8_t dtoh (const uint8_t dint)
 
 引数の下位 4bitに対応する ASCII文字を返す。
+結果は大文字になる。
+
+```c
+// #include <hexdigit.h>
+
+uint8_t H = dteh(15);           // 'F'
+uint8_t h = dteh(15) | 0x20;    // 'f'
+```
 
 ### uint8_t htod (const uint8_t hchar)
 
 16進数を表す ASCII文字の引数に対応する 4bitの正数を返す。
+レターケースには対応するが、
+不正な文字の確認はしていない（何らかの値になる）
+
+```c
+// #include <hexdigit.h>
+
+uint8_t a = htod('b');          // 11
+```
 
 ## bitsconv.h
 
@@ -295,9 +312,21 @@ INPUT に指定されているならプルアップ抵抗の ON と OFF を切�
 
 8bitの引数に対応する 16bitの "倍角" ビットパターンを返す。
 
+```c
+// #include <bitsconv.h>
+
+uint16_t bits = wbits(0x00100101);    // 0b0000110000110011
+```
+
 ### uint8_t rbits (const uint8_t bits)
 
 8bitの引数に対応する 8bitの "鏡対称" ビットパターンを返す。
+
+```c
+// #include <bitsconv.h>
+
+uint8_t bits = rbits(0x00100101);     // 0b10100100
+```
 
 ## IntervalEvent.h
 

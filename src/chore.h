@@ -1,6 +1,6 @@
 /***************
  *
- * gpio - GPIO helper utilities
+ * chore - chore macro utilities
  *
  * target architectures: Atmel AVR (ATmega 328P, 1284P and other)
  *
@@ -9,11 +9,14 @@
  *
  */
 
+#ifndef __CHORE_H
+#define __CHORE_H
+
 #include <Arduino.h>
-#include "gpio.h"
 
-void digitalToggle (uint8_t outputPin) {
-    *portInputRegister(digitalPinToPort(outputPin)) |= digitalPinToBitMask(outputPin);
-}
+#define digitalToggle(outputPin)	\
+    *portInputRegister(digitalPinToPort(outputPin)) |= digitalPinToBitMask(outputPin)
 
-// end of code
+#endif
+
+// end of header
