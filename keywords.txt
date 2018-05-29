@@ -37,6 +37,9 @@ setInterval	KEYWORD2
 setTimeout	KEYWORD2
 clear	KEYWORD2
 yield	KEYWORD2
+intime	KEYWORD2
+timeup	KEYWORD2
+setTimelimit	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
