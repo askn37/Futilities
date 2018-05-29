@@ -38,7 +38,7 @@
 
 依存性：
 
-### digitalToggle (outputPin)
+### digitalToggle(outputPin)
 
 マクロ：
 指定のピンの出力をトグル変化する。
@@ -335,6 +335,16 @@ uint8_t bits = rbits(0x00100101);     // 0b10100100
 依存性：
 <stdlib.h>
 
+### IntervalEvent (void)
+
+コンストラクタ。
+このクラスオブジェクトには、ひとつのタイムアップ・イベントと、
+任意長の待機イベントキューがある。
+
+待機イベントキューは任意のユーザ関数を登録し、
+指定した経過時間後に実行させる。
+（タイムアップ・イベントの使用例は後述）
+
 ```c
 #include <IntervalEvent.h>
 
@@ -351,11 +361,7 @@ void loop (void) {
 ```
 
 待機イベントキューは malloc()、realloc()、free() で実装されている。
-登録イベント数には空きメモリがある限り上限はない。
-
-### IntervalEvent (void)
-
-コンストラクタ。
+登録可能イベント数には空きメモリがある限り上限はない。
 
 ### int setInterval (void (*userFunc)(void), uint32_t interval)
 
@@ -375,6 +381,40 @@ intervalミリ秒後に一度だけ実行するイベントを作成し、成功
 所定の時間を経過していたらイベントを実行する。
 引数にイベントIDを指定した場合は、そのイベントが実行された場合に真を返す。
 
+### bool setTimelimit (uint32_t interval)
+
+タイムアップ・イベントの実行時間を intervalミリ秒で設定する。
+このタイムアップ・イベントはクラスオブジェクトひとつにつき、ひとつだけ存在する。
+
+### bool timeup (void)
+
+setTimelimit() で設定した時間を経過していれば真を返す。
+timeout() とは返値の真偽が逆である。
+
+```c
+// Arduinoスケッチで言えば
+void setup (void) {
+  event.setTimelimit(1000);
+}
+void loop (void) {
+  if (event.timeup()) return;   // Time up
+  ;;;
+}
+```
+
+### bool timeout (void)
+
+setTimelimit() で設定した時間に達していなければ真を返す。
+timeup() とは返値の真偽が逆である。
+
+```c
+event.setTimelimit(1000);
+
+while (event.timeout()) {
+  yield();                  // 1000ms過ぎるまで何度でも実行される
+}
+```
+
 ## 既知の不具合／制約／課題
 
 - 主要な AVR 以外はテストされていない。
@@ -383,7 +423,8 @@ intervalミリ秒後に一度だけ実行するイベントを作成し、成功
 
 ## 改版履歴
 
-- 0.1.1
+- 0.1.2
+  - digitalToggle() を雑用マクロに変更。
 
 ## 使用許諾
 

@@ -10,7 +10,7 @@
  */
 
 #include <Arduino.h>
-#include <gpio.h>
+#include <chore.h>
 #include "IntervalEvent.h"
 
 #define LED_BUILTIN 13
@@ -48,10 +48,12 @@ void setup (void) {
 	Serial.println(F("Startup"));
 	event.setTimeout(fist, 2000);
 	blinkId = event.setInterval(blink, 200);
+	event.setTimelimit(10000);
 }
 
 void loop (void) {
 	event.yield();
+	if (event.timeup()) Serial.println(F("Timeup"));
 }
 
 // end of code

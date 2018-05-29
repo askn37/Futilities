@@ -21,25 +21,30 @@ private:
         uint32_t interval;
         uint32_t ms;
         int id;
-        bool timeout;
+        bool ones;
         void (*event)(void);
     } interval_t;
 
-    interval_t *eventList;
-    int items = 0;
-    int serial = 1;
+    interval_t *_eventList;
+    uint32_t _timeup;
+    uint32_t _ms;
+    int _items = 0;
+    int _serial = 1;
 
 public:
-    IntervalEvent (void) { items = 0; eventList = (interval_t*) malloc(4); }
-    ~IntervalEvent (void) { free(eventList); }
+    IntervalEvent (void) { _items = 0; _eventList = (interval_t*) malloc(4); }
+    ~IntervalEvent (void) { free(_eventList); }
 
     int setInterval (void (*)(void), uint32_t, bool = false);
     inline int setTimeout (void (*userFunc)(void), uint32_t interval) {
         return setInterval(userFunc, interval, true); 
     }
-    bool clear (int eventId);
+    bool clear (int);
+    bool yield (int = 0);
 
-    bool yield (int eventId = 0);
+    bool timeout (uint32_t = 0);
+    inline bool timeup (void) { return !timeout(); }
+    inline bool setTimelimit (uint32_t interval) { return timeout(interval); }
 };
 
 #endif

@@ -13,40 +13,39 @@
 #include "IntervalEvent.h"
 
 int IntervalEvent::setInterval (void (*userFunc)(void), uint32_t interval, bool oneshot) {
+    int i;
     // Search for unique new id
-    serial += 2;
-    for (int i = 0; i < items; i++) {
-        if (eventList[i].id == serial) {
-            serial += 2;
+    _serial += 2;
+    for (i = 0; i < _items; i++) {
+        if (_eventList[i].id == _serial) {
+            _serial += 2;
             i = -1;
         }
     }
-    void *newList = realloc(eventList, sizeof(interval_t) * (items + 1));
-    if (newList == NULL) return 0;
-    eventList = (interval_t*) newList;
-    int idx = items;
-    items++;
-    eventList[idx].interval = interval;
-    eventList[idx].ms = millis();
-    eventList[idx].timeout = oneshot;
-    eventList[idx].id = serial;
-    eventList[idx].event = userFunc;
-    return eventList[idx].id;
+    void *_newList = realloc(_eventList, 4 | sizeof(interval_t) * (_items + 1));
+    if (_newList == NULL) return 0;
+    _eventList = (interval_t*) _newList;
+    i = _items;
+    _items++;
+    _eventList[i].interval = interval;
+    _eventList[i].ms = millis();
+    _eventList[i].ones = oneshot;
+    _eventList[i].id = _serial;
+    _eventList[i].event = userFunc;
+    return _eventList[i].id;
 }
 
 bool IntervalEvent::clear (int eventId) {
     int m = 0;
-    if (items > 0) {
-        for (int i = 0; i < items; i++) {
-            if (eventList[i].id == eventId) continue;
-            if (m != i) eventList[m] = eventList[i];
+    if (_items > 0) {
+        for (int i = 0; i < _items; i++) {
+            if (_eventList[i].id == eventId) continue;
+            if (m != i) _eventList[m] = _eventList[i];
             m++;
         }
-        if (items != m) {
-            size_t s = sizeof(interval_t) * --items;
-            if (s == 0) s = 4;
-            void *newList = realloc(eventList, s);
-            if (newList != NULL) eventList = (interval_t*) newList;
+        if (_items != m) {
+            void *_newList = realloc(_eventList, 4 | sizeof(interval_t) * --_items);
+            if (_newList != NULL) _eventList = (interval_t*) _newList;
             return true;
         }
     }
@@ -54,17 +53,29 @@ bool IntervalEvent::clear (int eventId) {
 }
 
 bool IntervalEvent::yield (int eventId) {
-    for (int i = 0; i < items; i++) {
-        if ( (millis() - eventList[i].ms) >= eventList[i].interval ) {
-            void (*userFunc)(void) = eventList[i].event;
-            int f = eventList[i].id == eventId;
-            if (eventList[i].timeout) this->clear(eventList[i--].id);
-            else eventList[i].ms = millis();
+    for (int i = 0; i < _items; i++) {
+        if ( (millis() - _eventList[i].ms) >= _eventList[i].interval ) {
+            void (*userFunc)(void) = _eventList[i].event;
+            int f = _eventList[i].id == eventId;
+            if (_eventList[i].ones) this->clear(_eventList[i--].id);
+            else _eventList[i].ms = millis();
             userFunc();
             if (f) return true;
         }
     }
     return false;
+}
+
+bool IntervalEvent::timeout (uint32_t interval) {
+    if (interval) {
+        _ms = interval;
+        _timeup = millis();
+    }
+    else if (_ms > 0 && (millis() - _timeup) >= _ms) {
+        _ms = 0;
+        return false;
+    }
+    return true;
 }
 
 // end of code

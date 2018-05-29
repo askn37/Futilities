@@ -13,9 +13,9 @@
 // #include <avr/power.h>
 
 // #include <Futilities.h>
+#include <chore.h>
 #include <halt.h>
 #include <pcintvect.h>
-#include <gpio.h>
 
 #define CONSOLE_BAUD 9600
 
