@@ -167,11 +167,11 @@ MCU（とそのコンパイラ）の実装に依存する。
 
 ### uint8\_t dtob (const uint8\_t DECBYTE)
 
-10進数の 0~99 を 16進数の BCD 0x00~0x99 に変換して返すバイト型関数。
+10進数の 0～99 を 16進数の BCD 0x00～0x99 に変換して返すバイト型関数。
 
 ### uint8\_t btod (const uint8\_t BCDBYTE)
 
-16進数の BCD 0x00~0x99 を 10進数の 0~99 に変換して返すバイト型関数。
+16進数の BCD 0x00～0x99 を 10進数の 0～99 に変換して返すバイト型関数。
 
 ### uint16\_t wdtob (const uint16\_t DECWORD)
 
