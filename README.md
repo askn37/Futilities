@@ -175,11 +175,11 @@ MCU（とそのコンパイラ）の実装に依存する。
 
 ### uint16\_t wdtob (const uint16\_t DECWORD)
 
-10進数の 0~9999 を 16進数の BCD 0x0000~0x9999 に変換して返すワード型関数。
+10進数の 0～9999 を 16進数の BCD 0x0000～0x9999 に変換して返すワード型関数。
 
 ### uint16\_t wbtod (const uint16\_t BCDWORD)
 
-16進数の BCD 0x0000~0x9999 を 10進数の 0-9999 に変換して返すワード型関数。
+16進数の BCD 0x0000～0x9999 を 10進数の 0～9999 に変換して返すワード型関数。
 
 ### time\_t bcdToEpoch (const bcddate\_t BCDDATE, const bcdtime\_t BCDTIME)
 
