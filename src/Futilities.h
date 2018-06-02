@@ -13,14 +13,15 @@
 #define __FUTILITIES_H
 
 #include <Arduino.h>
+#include "adcomp.h"
+#include "bcdtime.h"
+#include "bitsconv.h"
 #include "chore.h"
 #include "halt.h"
-#include "memstat.h"
-#include "adcomp.h"
-#include "pcintvect.h"
 #include "hexdig.h"
-#include "bitsconv.h"
 #include "IntervalEvent.h"
+#include "memstat.h"
+#include "pcintvect.h"
 
 #endif
 

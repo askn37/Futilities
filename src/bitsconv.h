@@ -15,8 +15,16 @@
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 
-extern "C" uint16_t wbits (const uint8_t);
-extern "C" uint8_t rbits (const uint8_t);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern uint16_t wbits (const uint8_t);
+extern uint8_t rbits (const uint8_t);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

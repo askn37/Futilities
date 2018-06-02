@@ -14,10 +14,18 @@
 
 #include <Arduino.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void adcSetup (uint8_t data);
 uint16_t adc (void);
 
-extern "C" uint16_t getVcc (void);
+extern uint16_t getVcc (void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

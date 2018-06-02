@@ -14,8 +14,16 @@
 
 #include <Arduino.h>
 
-extern "C" uint8_t dtoh (const uint8_t);
-extern "C" uint8_t htod (const uint8_t);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern uint8_t dtoh (const uint8_t);
+extern uint8_t htod (const uint8_t);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

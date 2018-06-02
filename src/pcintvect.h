@@ -14,8 +14,16 @@
 
 #include <Arduino.h>
 
-extern "C" void attachPCInterrupt (uint8_t, void (*)(void) = NULL);
-extern "C" void detachPCInterrupt (uint8_t);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern void attachPCInterrupt (uint8_t, void (*)(void) = NULL);
+extern void detachPCInterrupt (uint8_t);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
