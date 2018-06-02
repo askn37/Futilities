@@ -52,6 +52,20 @@ bool IntervalEvent::clear (int eventId) {
     return false;
 }
 
+bool IntervalEvent::isEvent (int eventId) {
+    for (int i = 0; i < _items; i++) {
+        if (_eventList[i].id == eventId) return true;
+    }
+    return false;
+}
+
+bool IntervalEvent::isEvent (void (*userFunc)(void)) {
+    for (int i = 0; i < _items; i++) {
+        if (_eventList[i].event == userFunc) return true;
+    }
+    return false;
+}
+
 bool IntervalEvent::yield (int eventId) {
     for (int i = 0; i < _items; i++) {
         if ( (millis() - _eventList[i].ms) >= _eventList[i].interval ) {
