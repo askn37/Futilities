@@ -39,8 +39,8 @@ public:
     inline int setTimeout (void (*userFunc)(void), uint32_t interval) {
         return setInterval(userFunc, interval, true);
     }
-    bool IntervalEvent::isEvent (int eventId);
-    bool IntervalEvent::isEvent (void (*userFunc)(void));
+    bool isEvent (int eventId);
+    bool isEvent (void (*userFunc)(void));
     bool clear (int);
     bool yield (int = 0);
 
