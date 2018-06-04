@@ -12,66 +12,72 @@
 #include <Arduino.h>
 #include "IntervalEvent.h"
 
-int IntervalEvent::setInterval (void (*userFunc)(void), uint32_t interval, bool oneshot) {
-    int i;
-    // Search for unique new id
-    _serial += 2;
-    for (i = 0; i < _items; i++) {
-        if (_eventList[i].id == _serial) {
-            _serial += 2;
-            i = -1;
+eventid_t IntervalEvent::setInterval (eventid_t userFunc, uint32_t interval, bool oneshot) {
+    void *_newList = NULL;
+    int used = -1;
+    if (_items == 0) {
+        _newList = malloc(sizeof(interval_t));
+        if (_newList == NULL) return NULL;
+        used = 0;
+        _items = 1;
+        _eventList = (interval_t*) _newList;
+    }
+    else {
+        for (int i = 0; i < _items; i++) {
+            if (_eventList[i].eventid == userFunc) used = i;
+        }
+        if (used < 0) {
+            used = _items;
+            _newList = realloc(_eventList, sizeof(interval_t) * (_items + 1));
+            if (_newList == NULL) return NULL;
+            _items++;
+            _eventList = (interval_t*) _newList;
         }
     }
-    void *_newList = realloc(_eventList, 4 | sizeof(interval_t) * (_items + 1));
-    if (_newList == NULL) return 0;
-    _eventList = (interval_t*) _newList;
-    i = _items;
-    _items++;
-    _eventList[i].interval = interval;
-    _eventList[i].ms = millis();
-    _eventList[i].ones = oneshot;
-    _eventList[i].id = _serial;
-    _eventList[i].event = userFunc;
-    return _eventList[i].id;
+    _eventList[used].interval = interval;
+    _eventList[used].ms = millis();
+    _eventList[used].ones = oneshot;
+    _eventList[used].eventid = userFunc;
+    return userFunc;
 }
 
-bool IntervalEvent::clear (int eventId) {
+bool IntervalEvent::clear (eventid_t eventId) {
     int m = 0;
     if (_items > 0) {
         for (int i = 0; i < _items; i++) {
-            if (_eventList[i].id == eventId) continue;
+            if (_eventList[i].eventid == eventId) continue;
             if (m != i) _eventList[m] = _eventList[i];
             m++;
         }
         if (_items != m) {
-            void *_newList = realloc(_eventList, 4 | sizeof(interval_t) * --_items);
-            if (_newList != NULL) _eventList = (interval_t*) _newList;
+            _items--;
+            if (_items == 0) {
+                free(_eventList);
+                _eventList = NULL;
+            }
+            else {
+                void *_newList = realloc(_eventList, sizeof(interval_t) * _items);
+                if (_newList != NULL) _eventList = (interval_t*) _newList;
+            }
             return true;
         }
     }
     return false;
 }
 
-bool IntervalEvent::isEvent (int eventId) {
+bool IntervalEvent::isEvent (eventid_t eventId) {
     for (int i = 0; i < _items; i++) {
-        if (_eventList[i].id == eventId) return true;
+        if (_eventList[i].eventid == eventId) return true;
     }
     return false;
 }
 
-bool IntervalEvent::isEvent (void (*userFunc)(void)) {
-    for (int i = 0; i < _items; i++) {
-        if (_eventList[i].event == userFunc) return true;
-    }
-    return false;
-}
-
-bool IntervalEvent::yield (int eventId) {
+bool IntervalEvent::yield (eventid_t eventId) {
     for (int i = 0; i < _items; i++) {
         if ( (millis() - _eventList[i].ms) >= _eventList[i].interval ) {
-            void (*userFunc)(void) = _eventList[i].event;
-            int f = _eventList[i].id == eventId;
-            if (_eventList[i].ones) this->clear(_eventList[i--].id);
+            eventid_t userFunc = _eventList[i].eventid;
+            int f = _eventList[i].eventid == eventId;
+            if (_eventList[i].ones) this->clear(_eventList[i--].eventid);
             else _eventList[i].ms = millis();
             userFunc();
             if (f) return true;

@@ -14,16 +14,17 @@
 
 #include <Arduino.h>
 
+typedef void (*eventid_t)(void);
+
 class IntervalEvent {
 private:
 
-    typedef struct {
+    struct interval_t {
         uint32_t interval;
         uint32_t ms;
-        int id;
+        eventid_t eventid;
         bool ones;
-        void (*event)(void);
-    } interval_t;
+    };
 
     interval_t *_eventList;
     uint32_t _timeup;
@@ -32,17 +33,16 @@ private:
     int _serial = 1;
 
 public:
-    IntervalEvent (void) { _items = 0; _eventList = (interval_t*) malloc(4); }
-    ~IntervalEvent (void) { free(_eventList); }
+    IntervalEvent (void) { _items = 0; _eventList = NULL; }
+    ~IntervalEvent (void) { if (_eventList) free(_eventList); }
 
-    int setInterval (void (*)(void), uint32_t, bool = false);
-    inline int setTimeout (void (*userFunc)(void), uint32_t interval) {
+    eventid_t setInterval (eventid_t, uint32_t, bool = false);
+    inline eventid_t setTimeout (eventid_t userFunc, uint32_t interval) {
         return setInterval(userFunc, interval, true);
     }
-    bool isEvent (int eventId);
-    bool isEvent (void (*userFunc)(void));
-    bool clear (int);
-    bool yield (int = 0);
+    bool isEvent (eventid_t);
+    bool clear (eventid_t);
+    bool yield (eventid_t = NULL);
 
     bool intime (uint32_t = 0);
     inline bool timeup (void) { return !intime(); }

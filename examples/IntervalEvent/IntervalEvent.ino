@@ -17,7 +17,7 @@
 
 IntervalEvent event;
 
-int blinkId;
+eventid_t blinkId;
 
 void fine (void) {
 	Serial.println("Fine");

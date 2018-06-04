@@ -20,12 +20,14 @@
 void setup (void) {
     while (!Serial);
     Serial.begin(CONSOLE_BAUD);
+	Serial.println(F("Startup"));
 
-	char hexdata[] = "48494a4b";
-	for (int i = 0; i < sizeof(hexdata); i++) {
-		Serial.print( htod(hexdata[i]), DEC);
+	char hexdata[] = "0123456789abcdefABCDEF";
+	for (int i = 0; i < 22; i++) {
+		Serial.print( htod(hexdata[i]), HEX);
 		Serial.write(' ');
 	}
+	Serial.println();
 	Serial.println();
 
 	for (int i = 0; i < 256; i++) {

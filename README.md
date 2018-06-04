@@ -531,33 +531,35 @@ void loop (void) {
 待機イベントキューは malloc()、realloc()、free() で実装されている。
 登録可能イベント数には空きメモリがある限り上限はない。
 
-### int setInterval (void (*userFunc)(void), uint32_t interval)
+### eventid\_t setInterval (void (*userFunc)(void), uint32_t interval)
 
 intervalミリ秒間隔で定期実行するイベントを作成し、成功ならイベントID（常に真）を返す。
 
-おなじ関数ポインタを渡しても既存のイベントは上書きされず、新規のイベントが作られる。
-インターバルイベントは clear() しない限り消えないので、これを行うと意図しない挙動になるだろう。
+おなじ関数ポインタを渡すと既存のイベントは上書きされる。
 
-### int setTimeout (void (*userFunc)(void), uint32_t interval)
+- eventid\_t型が示す イベントIDの実体は、userFunc関数ポインタそのものである。
+
+### eventid\_t setTimeout (void (*userFunc)(void), uint32_t interval)
 
 intervalミリ秒後に一度だけ実行するイベントを作成し、成功ならイベントID（常に真）を返す。
 
-おなじ関数ポインタを渡しても既存のイベントは上書きされず、新規のイベントが作られる。
+おなじ関数ポインタを渡すと既存のイベントは上書きされる。
 
-### bool clear (int eventId)
+- eventid\_t型が示す イベントIDの実体は、userFunc関数ポインタそのものである。
+
+### bool isEvent (eventid\_t eventId)
+
+イベントIDを引数にとり、待機キューに見つかるなら真を返す。
+
+### bool clear (eventid\_t eventId)
 
 イベントIDを指定し、そのイベントを取り消す。
 イベントが存在しなければ偽を返す。
 
-### bool yield (int eventId = 0)
+### bool yield (eventid\_t eventId = NULL)
 
-所定の時間を経過していたらイベントを実行する。
-引数にイベントIDを指定した場合は、そのイベントが実行された場合に真を返す。
-
-### bool isEvent (int eventId)
-### bool isEvent (int void (*userFunc)(void))
-
-イベントIDまたは関数ポインタを引数にとり、待機キューに見つかるなら真を返す。
+所定の時間以上を経過したイベントを実行する。
+（省略可能な）引数にイベントIDを指定した場合は、そのイベントが実行されたときに真を返す。
 
 ### bool setTimelimit (uint32_t interval)
 
@@ -696,7 +698,7 @@ Arduino.h で外部ピン変化割込が標準実装されていないのは、�
 - 0.1.2
   - bcdtime.h を追加。
   - digitalToggle() を雑用マクロに変更。
-  - IntervalEvent.h にタイムアップ・イベントを追加。
+  - IntervalEvent.h の仕様を変更
 
 ## 使用許諾
 
