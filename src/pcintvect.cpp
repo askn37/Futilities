@@ -14,6 +14,8 @@
 
 volatile void __empty (void) {}
 volatile void (*__pcint_vect[4])(void) = {__empty, __empty, __empty, __empty};
+
+#ifndef SoftwareSerial_h
 #if defined(PCINT0_vect)
 ISR(PCINT0_vect) { __pcint_vect[0](); }
 #endif
@@ -25,6 +27,7 @@ ISR(PCINT2_vect) { __pcint_vect[2](); }
 #endif
 #if defined(PCINT3_vect)
 ISR(PCINT3_vect) { __pcint_vect[3](); }
+#endif
 #endif
 
 void attachPCInterrupt (uint8_t interruptPin, void (*userFunc)(void)) {

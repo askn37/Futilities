@@ -16,6 +16,10 @@
 #include <avr/wdt.h>
 #include <avr/sleep.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define wdt_start(value)   \
 __asm__ __volatile__ (  \
     "in __tmp_reg__,__SREG__"   "\n\t" \
@@ -40,11 +44,15 @@ __asm__ __volatile__ (  \
 #define wdtReset()          wdt_reset()
 
 bool _halt (void);
-extern "C" void reboot (void);
-extern "C" void wdtAttachInterrupt (void(*)(void) = NULL);
-extern "C" inline void wdtDetachInterrupt (void) { return wdtAttachInterrupt(NULL); };
+extern void reboot (void);
+extern void wdtAttachInterrupt (void(*)(void) = NULL);
+extern inline void wdtDetachInterrupt (void) { return wdtAttachInterrupt(NULL); };
 
-extern "C" uint16_t halt (uint16_t = 0, uint8_t = SLEEP_MODE_PWR_DOWN);
+extern uint16_t halt (uint16_t = 0, uint8_t = SLEEP_MODE_PWR_DOWN);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

@@ -15,7 +15,15 @@
 #include <Arduino.h>
 #include <stdlib.h>
 
-extern "C" size_t memFreeSize (void);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern size_t memFreeSize (void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

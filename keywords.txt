@@ -3,6 +3,7 @@
 #######################################
 
 IntervalEvent	KEYWORD1
+interval_t	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -35,6 +36,7 @@ rbits	KEYWORD2
 
 setInterval	KEYWORD2
 setTimeout	KEYWORD2
+isEvent	KEYWORD2
 clear	KEYWORD2
 yield	KEYWORD2
 intime	KEYWORD2

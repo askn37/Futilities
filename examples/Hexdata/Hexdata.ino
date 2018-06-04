@@ -20,33 +20,35 @@
 void setup (void) {
     while (!Serial);
     Serial.begin(CONSOLE_BAUD);
+	Serial.println(F("Startup"));
 
-	uint8_t hexdata[] = "48494a4b";
-	for (char i = 0; i < sizeof(hexdata); i++) {
-		Serial.print( htod(hexdata[i]), DEC);
+	char hexdata[] = "0123456789abcdefABCDEF";
+	for (int i = 0; i < 22; i++) {
+		Serial.print( htod(hexdata[i]), HEX);
 		Serial.write(' ');
 	}
+	Serial.println();
 	Serial.println();
 
 	for (int i = 0; i < 256; i++) {
 		Serial.write(dtoh(i >> 4));
 		Serial.write(dtoh(i & 15));
 		Serial.write(' ');
-		if (i % 16 == 15) Serial.println();		
+		if (i % 16 == 15) Serial.println();
 	}
 	Serial.println();
 
 	for (int i = 0; i < 256; i++) {
 		Serial.print(wbits(i), HEX);
 		Serial.write(' ');
-		if (i % 16 == 15) Serial.println();		
+		if (i % 16 == 15) Serial.println();
 	}
 	Serial.println();
 
 	for (int i = 0; i < 256; i++) {
 		Serial.print(rbits(i), HEX);
 		Serial.write(' ');
-		if (i % 16 == 15) Serial.println();		
+		if (i % 16 == 15) Serial.println();
 	}
 	Serial.println();
 
