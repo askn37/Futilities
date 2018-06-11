@@ -44,6 +44,12 @@ eventid_t IntervalEvent::setInterval (eventid_t userFunc, uint32_t interval, boo
 bool IntervalEvent::clear (eventid_t eventId) {
     int m = 0;
     if (_items > 0) {
+        if (eventId == NULL) {
+            _items = 0;
+            free(_eventList);
+            _eventList = NULL;
+            return true;
+        }
         for (int i = 0; i < _items; i++) {
             if (_eventList[i].eventid == eventId) continue;
             if (m != i) _eventList[m] = _eventList[i];
