@@ -41,7 +41,7 @@ public:
         return setInterval(userFunc, interval, true);
     }
     bool isEvent (eventid_t);
-    bool clear (eventid_t);
+    bool clear (eventid_t = NULL);
     bool yield (eventid_t = NULL);
 
     bool intime (uint32_t = 0);

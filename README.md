@@ -12,7 +12,7 @@
 
 2. ライブラリマネージャで読み込む
 
-  スケッチ -> ライブラリをインクルード -> .ZIP形式のライブラリをインストール...
+    スケッチ -> ライブラリをインクルード -> .ZIP形式のライブラリをインストール...
 
 ## 使い方
 
@@ -289,7 +289,7 @@ epoch を引数にとり、その時分秒を 6桁の文字列表現にして返
 依存性：
 <avr/pgmspace.h>
 
-### uint16_t wbits (const uint8_t bits)
+### uint16\_t wbits (const uint8\_t bits)
 
 8bitの引数に対応する 16bitの "倍角" ビットパターンを返す。
 
@@ -299,7 +299,7 @@ epoch を引数にとり、その時分秒を 6桁の文字列表現にして返
 uint16_t bits = wbits(0x00100101);    // 0b0000110000110011
 ```
 
-### uint8_t rbits (const uint8_t bits)
+### uint8\_t rbits (const uint8\_t bits)
 
 8bitの引数に対応する 8bitの "鏡対称" ビットパターンを返す。
 
@@ -337,7 +337,7 @@ INPUT に指定されているならプルアップ抵抗の ON と OFF を切�
 注意：
 Leonardo（ATmega32U4）等の USB-UART内臓型では期待したとおりには動作しない。
 
-### uint16\_t halt (uint16\_t SECONDS = 0, uint8_t MODE = SLEEP_MODE_PWR_DOWN)
+### uint16\_t halt (uint16\_t SECONDS = 0, uint8\_t MODE = SLEEP\_MODE\_PWR\_DOWN)
 
 指定した時間、MCU（AVR）を指定の休止モードで停止する。
 第1引数は 1～65535 の秒数、または省略時 0 == 無期限である。
@@ -470,7 +470,7 @@ wdtDisable();             // watchdog timer 停止
 
 依存性：
 
-### uint8_t dtoh (const uint8_t dint)
+### uint8\_t dtoh (const uint8\_t dint)
 
 引数の下位 4bitに対応する ASCII文字を返す。
 結果は大文字になる。
@@ -482,7 +482,7 @@ uint8_t H = dteh(15);           // 'F'
 uint8_t h = dteh(15) | 0x20;    // 'f'
 ```
 
-### uint8_t htod (const uint8_t hchar)
+### uint8\_t htod (const uint8\_t hchar)
 
 16進数を表す ASCII文字の引数に対応する 4bitの正数を返す。
 レターケースには対応するが、
@@ -531,7 +531,7 @@ void loop (void) {
 待機イベントキューは malloc()、realloc()、free() で実装されている。
 登録可能イベント数には空きメモリがある限り上限はない。
 
-### eventid\_t setInterval (void (*userFunc)(void), uint32_t interval)
+### eventid\_t setInterval (void (*userFunc)(void), uint32\_t interval)
 
 intervalミリ秒間隔で定期実行するイベントを作成し、成功ならイベントID（常に真）を返す。
 
@@ -539,7 +539,7 @@ intervalミリ秒間隔で定期実行するイベントを作成し、成功な
 
 - eventid\_t型が示す イベントIDの実体は、userFunc関数ポインタそのものである。
 
-### eventid\_t setTimeout (void (*userFunc)(void), uint32_t interval)
+### eventid\_t setTimeout (void (*userFunc)(void), uint32\_t interval)
 
 intervalミリ秒後に一度だけ実行するイベントを作成し、成功ならイベントID（常に真）を返す。
 
@@ -551,17 +551,18 @@ intervalミリ秒後に一度だけ実行するイベントを作成し、成功
 
 イベントIDを引数にとり、待機キューに見つかるなら真を返す。
 
-### bool clear (eventid\_t eventId)
+### bool clear (eventid\_t eventId = NULL)
 
 イベントIDを指定し、そのイベントを取り消す。
 イベントが存在しなければ偽を返す。
+引数を省略あるいは NULL を指定すると、全てのイベントを取り消す。
 
 ### bool yield (eventid\_t eventId = NULL)
 
-所定の時間以上を経過したイベントを実行する。
-（省略可能な）引数にイベントIDを指定した場合は、そのイベントが実行されたときに真を返す。
+引数を省略あるいは NULL を渡すと、所定の時間以上を経過したイベントを実行する。
+引数にイベントIDを指定した場合は、そのイベントが実行されたときに真を返す。
 
-### bool setTimelimit (uint32_t interval)
+### bool setTimelimit (uint32\_t interval)
 
 タイムアップ・イベントの実行時間を intervalミリ秒で設定する。
 常に真を返す。
@@ -635,7 +636,7 @@ size_t freeSize = memFreeSize();
 注意：
 SoftwareSerial とは併用できない。
 
-### void attachPCInterrupt (uint8_t interruptPin, void (*userFunc)(void) = NULL)
+### void attachPCInterrupt (uint8\_t interruptPin, void (*userFunc)(void) = NULL)
 
 指定のピンに対応する外部ピン変化割込を有効にし、
 指定のユーザー定義ルーチンを割込ベクタに割り付ける。
@@ -673,7 +674,7 @@ MCUの品種によってピン割付定義が異なる。
 普通はそのようにして使うだろう。
 SoftwareSerial はまさにそのようにして外部ピン変化割込を利用している。
 
-### void detachPCInterrupt (uint8_t interruptPin)
+### void detachPCInterrupt (uint8\_t interruptPin)
 
 指定のピンに対応するPCINT割込を解除する。
 対応するポートグループの割込ベクタも解除される。
