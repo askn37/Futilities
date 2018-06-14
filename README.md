@@ -78,9 +78,9 @@ MCU（AVR）の VCC絶対定格は 6.0V なので、最大値は 6000 であろ�
 // pinMode(A1, INPUT);
 // digitalWrite(A1, LOW);
 
-openDrain(A1, LOW);		// pinMode(A1, OUTPUT) と等価
+openDrain(A1, LOW);     // pinMode(A1, OUTPUT) と等価
 
-openDrain(A1, HIGH);	// pinMode(A1, INPUT) と等価
+openDrain(A1, HIGH);    // pinMode(A1, INPUT) と等価
 ```
 
 実態としては、openDrain(LOW) は LOW出力モード、
