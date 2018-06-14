@@ -23,6 +23,8 @@ uint16_t adc (void);
 
 extern uint16_t getVcc (void);
 
+extern void openDrain (uint8_t, bool);
+
 #ifdef __cplusplus
 }
 #endif

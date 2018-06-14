@@ -42,4 +42,11 @@ uint16_t adc (void){
     return tADC;
 }
 
+void openDrain (uint8_t pin, bool state) {
+    volatile uint8_t *reg = portModeRegister(digitalPinToPort(pin));
+    uint8_t bit = digitalPinToBitMask(pin);
+    if (state) *reg &= ~bit;
+    else       *reg |= bit;
+}
+
 // end of code
