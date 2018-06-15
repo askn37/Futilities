@@ -69,6 +69,37 @@ Serial.print(vcc / 1000.0);
 
 MCU（AVR）の VCC絶対定格は 6.0V なので、最大値は 6000 であろう。
 
+### void openDrain (uint8\_t pin, bool state)
+
+第1引数で示した Arduino デジタルピンを（擬似的な）オープンドレイン出力とみなし、
+第2引数で LOW == 吸い込み、HIGH == Hi-Z に設定する。
+
+```c
+// pinMode(A1, INPUT);
+// digitalWrite(A1, LOW);
+
+openDrain(A1, LOW);     // pinMode(A1, OUTPUT) と等価
+
+openDrain(A1, HIGH);    // pinMode(A1, INPUT) と等価
+```
+
+実態としては、openDrain(LOW) は LOW出力モード、
+openDrain(HIGH) は 入力モードと等価である。
+したがって HIGHのときは digitalRead() でピンの状態を読むことができ、
+またワイアードORでの外部回路結線が可能になる。
+しかしながらそれを正しく行うには（AVR内臓のそれではなく）外部回路で適切に
+抵抗値でプルアップされていなければならない。
+
+重要な注意：
+擬似的にオープンドレイン出力動作を作り出しているので、絶対定格を超える電圧は扱えない。
+そしてまた LOW-HIGH 切替の動作速度はかなり遅い。
+さらにまたこの状態で使用中のピンに対して
+不用意に pinMode(INPUT_PULLUP) および digitalWrite(HIGH) を実行してはならない。
+適切ではない配線がされている際にこれを行うと、過電流で回路を焼損する恐れがある。
+
+
+この関数は都合により現在はここに仮置きされているが、将来は他のファイルに移動するだろう。
+
 ----
 
 ## bcdtime.h
