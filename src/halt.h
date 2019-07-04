@@ -48,7 +48,7 @@ extern void reboot (void);
 extern void wdtAttachInterrupt (void(*)(void) = NULL);
 extern inline void wdtDetachInterrupt (void) { return wdtAttachInterrupt(NULL); };
 
-extern uint16_t halt (uint16_t = 0, uint8_t = SLEEP_MODE_PWR_DOWN);
+extern uint16_t halt (uint16_t = 0, uint8_t = SLEEP_MODE_PWR_DOWN, bool = false);
 
 #ifdef __cplusplus
 }

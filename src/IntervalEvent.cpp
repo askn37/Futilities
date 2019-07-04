@@ -12,8 +12,14 @@
 #include <Arduino.h>
 #include "IntervalEvent.h"
 
-eventid_t IntervalEvent::setInterval (eventid_t userFunc, uint32_t interval, bool oneshot) {
+eventid_t IntervalEvent::setInterval (
+	eventid_t userFunc,
+	uint32_t interval,
+	uint32_t offset,
+	bool oneshot ) {
+
     void *_newList = NULL;
+	uint32_t launch = millis();
     int used = -1;
     if (_items == 0) {
         _newList = malloc(sizeof(interval_t));
@@ -28,14 +34,18 @@ eventid_t IntervalEvent::setInterval (eventid_t userFunc, uint32_t interval, boo
         }
         if (used < 0) {
             used = _items;
-            _newList = realloc(_eventList, sizeof(interval_t) * (_items + 1));
+            _newList = realloc(_eventList,
+				sizeof(interval_t) * (_items + 1));
             if (_newList == NULL) return NULL;
             _items++;
             _eventList = (interval_t*) _newList;
         }
     }
+	if (offset) {
+		launch = launch - interval + offset;
+	}
     _eventList[used].interval = interval;
-    _eventList[used].ms = millis();
+    _eventList[used].ms = launch;
     _eventList[used].ones = oneshot;
     _eventList[used].eventid = userFunc;
     return userFunc;
@@ -62,7 +72,8 @@ bool IntervalEvent::clear (eventid_t eventId) {
                 _eventList = NULL;
             }
             else {
-                void *_newList = realloc(_eventList, sizeof(interval_t) * _items);
+                void *_newList = realloc(_eventList,
+					sizeof(interval_t) * _items);
                 if (_newList != NULL) _eventList = (interval_t*) _newList;
             }
             return true;
