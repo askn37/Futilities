@@ -25,6 +25,13 @@ extern uint16_t getVcc (void);
 
 extern void openDrain (uint8_t, bool);
 
+extern float getThermistor (uint8_t, float, float, float, float);
+
+#ifdef __ADCOMP_ENABLE_ACP
+void acpSetup (void);
+extern void acpAttachInterrupt (uint8_t, void(*)(void), int);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

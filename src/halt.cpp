@@ -13,12 +13,12 @@
 #include "halt.h"
 
 volatile uint8_t __wdt_count = 0;
-volatile void __wdt_vect_empty (void) { __wdt_count++; }
-volatile void (*__wdt_vect)(void);
+void (*__wdt_vect)(void);
+void __wdt_vect_empty (void) { __wdt_count++; }
 ISR(WDT_vect) { __wdt_vect(); }
 // uint8_t getWdtCount (void) { return __wdt_count; }
 
-uint16_t halt (uint16_t _sec, uint8_t _mode) {
+uint16_t halt (uint16_t _sec, uint8_t _mode, bool _deep) {
     uint16_t _count = _sec;
     noInterrupts();
     __wdt_vect = __wdt_vect_empty;
@@ -32,8 +32,30 @@ uint16_t halt (uint16_t _sec, uint8_t _mode) {
         while (_halt());
     }
     else {
-        wdtStart(WDTO_1S);
-        while (_count > 0 && _halt()) _count--;
+        #ifdef WDTO_8S
+		if (_deep) {
+			while (_count > 0) {
+				if (_count > 8) {
+					wdtStart(WDTO_8S);
+					if (! _halt()) break;
+					_count -= 8;
+				}
+				else {
+					wdtStart(WDTO_1S);
+					if (! _halt()) break;
+					_count--;
+				}
+			}
+		}
+		else {
+        #endif
+
+			wdtStart(WDTO_1S);
+			while (_count > 0 && _halt()) _count--;
+
+        #ifdef WDTO_8S
+		}
+        #endif
     }
     sleep_disable();
     wdtDisable();
@@ -62,7 +84,7 @@ void reboot (void) {
 }
 
 void wdtAttachInterrupt (void(*callback)(void)) {
-    __wdt_vect = callback != NULL ? (volatile void (*)(void)) callback : (volatile void (*)(void)) __wdt_vect_empty;
+    __wdt_vect = callback != NULL ? (void (*)(void)) callback : (void (*)(void)) __wdt_vect_empty;
 }
 
 // end of code

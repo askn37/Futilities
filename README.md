@@ -20,6 +20,7 @@
 // まとめて全部
 #include <Arduino.h>
 #include <Futilities.h>
+/* 注意 SoftwareSerial.h とは共存できない */
 
 // あるいは必要なヘッダファイルだけ
 #include <adcomp.h>           // AD比較変換
@@ -30,7 +31,7 @@
 #include <hexdig.h>           // 16進変換
 #include <IntervalEvent.h>    // インターバルイベントクラス
 #include <memstat.h>          // メモリ情報
-#include <pcintvect.h>        // ピン変化割込
+#include <pcintvect.h>        // ピン変化割込 /* 注意 SoftwareSerial.h とは共存できない */
 ```
 
 # リファレンス
@@ -68,6 +69,32 @@ Serial.print(vcc / 1000.0);
 ```
 
 MCU（AVR）の VCC絶対定格は 6.0V なので、最大値は 6000 であろう。
+
+### float getThermistor (uint8\_t pin, float Tb, float Ta, float Tr, float r1)
+
+NTCサーミスタをADCで読み取って温度（摂氏）を返す。
+引数には 計測ピン、B定数値、基準温度値、基準抵抗値、分圧抵抗値 を与える。
+分圧抵抗器は GND 側に挿入されているものとする。
+計測ピンはアナログ入力ピンでなければならない。
+このピン指定以外の引数は float 型で評価される。
+返値は float 型で返される。
+
+```c
+// MF52E-203J3950A の場合
+// B定数値 = 3950.0 K   (枝番の3950)
+// 基準温度値 = 25.0 C   (枝番のA)
+// 基準抵抗値 = 20.0 KΩ  (枝番の203) (枝番のJは誤差5%の意味)
+// 分圧抵抗 = 20.0 KΩ
+/*
+      Vcc --- [NTC] --+-- [R] -- Gnd
+    (IOREF)           |
+                    A0 Pin
+ */
+float To = getThermistor(A0, 3950.0, 25.0, 20.0, 20.0);
+Serial.print(To, 2);
+Serial.println(F(" C"));
+```
+
 
 ### void openDrain (uint8\_t pin, bool state)
 
@@ -259,7 +286,7 @@ BCD年月日の有効範囲外は正しい値とならない。
 修正ユリウス通日（MJD）を引数にとり、その曜日を表す整数を返す。
 表現範囲は 日曜 == 0 ～ 土曜 == 6 である。
 
-### time\_t mjdToEpoch (const date\_t mjd);
+### time\_t mjdToEpoch (const date\_t mjd)
 
 修正ユリウス通日（MJD）を引数にとり、epoch にして返す。
 時分秒は 00:00:00（正子） とするので 86400 の倍数となる。
@@ -368,23 +395,24 @@ INPUT に指定されているならプルアップ抵抗の ON と OFF を切�
 注意：
 Leonardo（ATmega32U4）等の USB-UART内臓型では期待したとおりには動作しない。
 
-### uint16\_t halt (uint16\_t SECONDS = 0, uint8\_t MODE = SLEEP\_MODE\_PWR\_DOWN)
+### uint16\_t halt (uint16\_t SECONDS = 0, uint8\_t MODE = SLEEP\_MODE\_PWR\_DOWN, bool DEEP = false)
 
 指定した時間、MCU（AVR）を指定の休止モードで停止する。
 第1引数は 1～65535 の秒数、または省略時 0 == 無期限である。
 第2引数は cpu_sleep() に渡す定数を指定し、省略時は SLEEP_MODE_PWR_DOWN である。
-停止中はタイマー計時等も停止し、
-外部割込要因以外は受け付けない。
+第3引数 DEEP に true を与えると、可能であればより深い休止状態にする。
+停止中はタイマー計時等も停止し、外部割込要因以外は受け付けない。
 外部割込で停止状態が解除されると、1以上の残時間を返す。
 ただし無期限停止解除の場合は常に 0を返す。
+また DEEP 有効時は残股間が8秒以上の場合、時間精度が非常に荒くなる。
 
 ```c
 // #include <halt.h>
 
 Serial.println("Zzz...");
-Serial.flush();
+Serial.flush();    // これを忘れると文字出力途中で寝てしまう
 
-halt();   // 外部割込がない限りホールトし続ける
+halt();            // 外部割込がない限りホールトし続ける
 
 Serial.println("Wakeup!");
 
@@ -407,8 +435,8 @@ USB-UART を停止しないと halt() は最大1秒以内に終了してしま�
 
 ### void reboot (void)
 
-MCU（AVR）を直ちに MCUデバイスのリセットする。
-このMCUデバイスのリセットで ~RESET ピンは LOW にはならないため、
+MCU（AVR）を直ちに MCUデバイスのソフトウェアリセットを実行する。
+このリセット操作では ~RESET ピンは LOW にはならないため、
 周辺機器まではリセットされない。
 
 ```c
@@ -562,9 +590,11 @@ void loop (void) {
 待機イベントキューは malloc()、realloc()、free() で実装されている。
 登録可能イベント数には空きメモリがある限り上限はない。
 
-### eventid\_t setInterval (void (*userFunc)(void), uint32\_t interval)
+### eventid\_t setInterval (void (*userFunc)(void), uint32\_t interval, uint32\_t offset = 0)
 
 intervalミリ秒間隔で定期実行するイベントを作成し、成功ならイベントID（常に真）を返す。
+1以上の offsetミリ秒を指定すると、初回実行のみ指定時間後に実行する。
+そうでなければ intervalミリ秒後に初回のイベントが発生する。
 
 おなじ関数ポインタを渡すと既存のイベントは上書きされる。
 
@@ -723,9 +753,16 @@ Arduino.h で外部ピン変化割込が標準実装されていないのは、�
 
 - 主要な AVR 以外はテストされていない。
 - 古い Arduino IDE には対応しない。1.8.5で動作確認。少なくとも C++11 は使えなければならない。
+- 文中で繰り返し断っているが、pcintvect.h は SoftwareSerial.h と共存できない。
+同様に PCInt Vecotr を排他的に使用するライブラリは使用できない。
 - 英文マニュアルが未整備である。
 
 ## 改版履歴
+
+- 0.1.3
+  - adcomp.h に getThermistor() を追加。
+  - setTimeout() に offset 引数を追加。
+  - halt() に deep 引数を追加。
 
 - 0.1.2
   - bcdtime.h を追加。

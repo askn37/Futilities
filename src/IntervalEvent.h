@@ -36,9 +36,9 @@ public:
     IntervalEvent (void) { _items = 0; _eventList = NULL; }
     ~IntervalEvent (void) { if (_eventList) free(_eventList); }
 
-    eventid_t setInterval (eventid_t, uint32_t, bool = false);
-    inline eventid_t setTimeout (eventid_t userFunc, uint32_t interval) {
-        return setInterval(userFunc, interval, true);
+    eventid_t setInterval (eventid_t, uint32_t, uint32_t = 0, bool = false);
+    inline eventid_t setTimeout (eventid_t userFunc, uint32_t interval, int32_t offset = 0) {
+        return setInterval(userFunc, interval, offset, true);
     }
     bool isEvent (eventid_t);
     bool clear (eventid_t = NULL);
