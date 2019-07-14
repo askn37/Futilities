@@ -9,27 +9,32 @@
  *
  */
 
+#ifndef SoftwareSerial_h
 #include <Arduino.h>
 #include "pcintvect.h"
 
 volatile void __empty (void) {}
-volatile void (*__pcint_vect[4])(void) = {__empty, __empty, __empty, __empty};
+volatile void (*__pcint_vect[5])(void) = {__empty, __empty, __empty, __empty};
 
 #if defined(PCINT0_vect)
-// ISR(PCINT0_vect, __attribute__ ((weak))) { __pcint_vect[0](); }
-ISR(PCINT0_vect) { __pcint_vect[0](); }
+ISR(PCINT0_vect, __attribute__ ((weak))) { __pcint_vect[0](); }
+// ISR(PCINT0_vect) { __pcint_vect[0](); }
 #endif
 #if defined(PCINT1_vect)
-// ISR(PCINT1_vect, __attribute__ ((weak))) { __pcint_vect[1](); }
-ISR(PCINT1_vect) { __pcint_vect[1](); }
+ISR(PCINT1_vect, __attribute__ ((weak))) { __pcint_vect[1](); }
+// ISR(PCINT1_vect) { __pcint_vect[1](); }
 #endif
 #if defined(PCINT2_vect)
-// ISR(PCINT2_vect, __attribute__ ((weak))) { __pcint_vect[2](); }
-ISR(PCINT2_vect) { __pcint_vect[2](); }
+ISR(PCINT2_vect, __attribute__ ((weak))) { __pcint_vect[2](); }
+// ISR(PCINT2_vect) { __pcint_vect[2](); }
 #endif
 #if defined(PCINT3_vect)
-// ISR(PCINT3_vect, __attribute__ ((weak))) { __pcint_vect[3](); }
-ISR(PCINT3_vect) { __pcint_vect[3](); }
+ISR(PCINT3_vect, __attribute__ ((weak))) { __pcint_vect[3](); }
+// ISR(PCINT3_vect) { __pcint_vect[3](); }
+#endif
+#if defined(PCINT4_vect)
+ISR(PCINT4_vect, __attribute__ ((weak))) { __pcint_vect[4](); }
+// ISR(PCINT4_vect) { __pcint_vect[3](); }
 #endif
 
 void attachPCInterrupt (uint8_t interruptPin, void (*userFunc)(void)) {
@@ -47,5 +52,6 @@ void detachPCInterrupt (uint8_t interruptPin) {
     PCIFR &= ~_BV(digitalPinToPCICRbit(interruptPin));
     PCICR &= ~_BV(digitalPinToPCICRbit(interruptPin));
 }
+#endif
 
 // end of code

@@ -759,6 +759,10 @@ Arduino.h で外部ピン変化割込が標準実装されていないのは、�
 
 ## 改版履歴
 
+- 0.1.4
+  - pcintvect を SoftwareSerial が先にインクルードされている場合は、無効化するように修正。
+  - pcintvect で PCINT4_vect も扱うように修正。
+
 - 0.1.3
   - adcomp.h に getThermistor() を追加。
   - setTimeout() に offset 引数を追加。

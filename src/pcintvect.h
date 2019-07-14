@@ -9,6 +9,7 @@
  *
  */
 
+#ifndef SoftwareSerial_h
 #ifndef __PCINTVECT_H
 #define __PCINTVECT_H
 
@@ -25,6 +26,7 @@ extern void detachPCInterrupt (uint8_t);
 }
 #endif
 
+#endif
 #endif
 
 // end of header
