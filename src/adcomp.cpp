@@ -50,10 +50,10 @@ void openDrain (uint8_t pin, bool state) {
 }
 
 float getThermistor (uint8_t pin, float Tb, float Ta, float Tr, float r1) {
-	int Vt = analogRead(pin);
-	float Rt = r1 * (1023.0 / (float)Vt - 1.0);
-	float Tp = (1 / ( (log(Rt / Tr) ) / Tb + 1 / (273.15 + Ta) )) - 273.15;
-	return Tp;
+    int Vt = analogRead(pin);
+    float Rt = r1 * (1023.0 / (float)Vt - 1.0);
+    float Tp = (1 / ( (log(Rt / Tr) ) / Tb + 1 / (273.15 + Ta) )) - 273.15;
+    return Tp;
 }
 
 #ifdef __ADCOMP_ENABLE_ACP
@@ -63,58 +63,58 @@ volatile void (*__acp_vect)(void);
 ISR(ANALOG_COMP_vect) { __acp_vect(); }
 
 void acpSetup (void) {
-	// ADSCRB : ADC Control and Status Register B
-	//   ACME : Analog Comparator Multiplexer Enable OFF=0
-	ADCSRB &= ~_BV(ACME);
+    // ADSCRB : ADC Control and Status Register B
+    //   ACME : Analog Comparator Multiplexer Enable OFF=0
+    ADCSRB &= ~_BV(ACME);
 
-	// ADCSRA : ADC Control and Status Register A
-	//   ADEN : ADC Enable 0:Power Off
-	ADCSRA &= ~_BV(ADEN);
+    // ADCSRA : ADC Control and Status Register A
+    //   ADEN : ADC Enable 0:Power Off
+    ADCSRA &= ~_BV(ADEN);
 
-	// ACSR : Analog Comparator Control and Status Register
-	// ACD  : Analog Comparator Disable ON=0
-	// ACIC : Analog Comparator Input Capture Enable OFF=0
-	// ACISn : Analog Comparator Interrupt Mode Select
-	//    00 : Toggle
-	//    10 : Edge FALSE
-	//    11 : Edge RAISE
-	ACSR &= ~( _BV(ACD) | _BV(ACIC) | _BV(ACIS1) | _BV(ACIS0) );
-	// ACBG : Analog Comparator Bandgap Select
-	//   ON : internal 1.1V
-	//  OFF : AIN0 Pin sensing
-	// ACIE : Analog Comparator Interrupt Enable
-	ACSR |= _BV(ACBG) | _BV(ACIE);
+    // ACSR : Analog Comparator Control and Status Register
+    // ACD  : Analog Comparator Disable ON=0
+    // ACIC : Analog Comparator Input Capture Enable OFF=0
+    // ACISn : Analog Comparator Interrupt Mode Select
+    //    00 : Toggle
+    //    10 : Edge FALSE
+    //    11 : Edge RAISE
+    ACSR &= ~( _BV(ACD) | _BV(ACIC) | _BV(ACIS1) | _BV(ACIS0) );
+    // ACBG : Analog Comparator Bandgap Select
+    //   ON : internal 1.1V
+    //  OFF : AIN0 Pin sensing
+    // ACIE : Analog Comparator Interrupt Enable
+    ACSR |= _BV(ACBG) | _BV(ACIE);
 
-	// PRR : Power Reduction Register
-	// PRADC : Power Reduction ADC
-	// PRR |= _BV(PRADC);
+    // PRR : Power Reduction Register
+    // PRADC : Power Reduction ADC
+    // PRR |= _BV(PRADC);
 }
 
 void acpAttachInterrupt (uint8_t pin, void(*callback)(void), int mode) {
-	uint8_t acsr = (uint8_t)mode & 3;	// CHANGE FALLING RISING
-	if (acsr == 1) acsr = 0;
-	if (pin < 8) {
-		acsr |= pin;
-		ADCSRB |= _BV(ACME);
-		ADCSRA &= ~_BV(ADEN);
-	}
-	else {
-		ADCSRA |= _BV(ADEN);
-		ADCSRB &= ~_BV(ACME);
-		if (pin == 8) acsr |= _BV(ACBG);
-	}
+    uint8_t acsr = (uint8_t)mode & 3;	// CHANGE FALLING RISING
+    if (acsr == 1) acsr = 0;
+    if (pin < 8) {
+        acsr |= pin;
+        ADCSRB |= _BV(ACME);
+        ADCSRA &= ~_BV(ADEN);
+    }
+    else {
+        ADCSRA |= _BV(ADEN);
+        ADCSRB &= ~_BV(ACME);
+        if (pin == 8) acsr |= _BV(ACBG);
+    }
 
-	if (callback == NULL) {
-		// Interrupt Disable
-		ACSR &= ~_BV(ACIE);
-		__acp_vect = (volatile void (*)(void)) __acp_vect_empty;
-	}
-	else {
-		// Interrupt Enable
-		__acp_vect = (volatile void (*)(void)) callback;
-		acsr |= _BV(ACIE);
-		ACSR = acsr;
-	}
+    if (callback == NULL) {
+        // Interrupt Disable
+        ACSR &= ~_BV(ACIE);
+        __acp_vect = (volatile void (*)(void)) __acp_vect_empty;
+    }
+    else {
+        // Interrupt Enable
+        __acp_vect = (volatile void (*)(void)) callback;
+        acsr |= _BV(ACIE);
+        ACSR = acsr;
+    }
 }
 #endif
 
