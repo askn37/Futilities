@@ -29,9 +29,6 @@ getThermistor	KEYWORD2
 acpSetup	KEYWORD2
 acpAttachInterrupt	KEYWORD2
 
-attachPCInterrupt	KEYWORD2
-detachPCInterrupt	KEYWORD2
-
 digitalToggle	KEYWORD2
 
 dtoh	KEYWORD2
