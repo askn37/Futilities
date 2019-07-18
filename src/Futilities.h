@@ -21,7 +21,6 @@
 #include "hexdig.h"
 #include "IntervalEvent.h"
 #include "memstat.h"
-#include "pcintvect.h"
 
 #endif
 
