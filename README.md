@@ -209,8 +209,8 @@ BCD年月日とBCD時分秒を併せ持つ（64bit幅の）構造体。
 
 ```c
 struct bcddatetime_t {
-    bcddate_t date;
-    bcdtime_t time;
+  bcddate_t date;
+  bcdtime_t time;
 };
 ```
 
