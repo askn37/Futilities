@@ -8,7 +8,8 @@
 
 ## Arduino IDE への導入
 
-1. .ZIPアーカイブをダウンロードする。[Click here](https://github.com/askn37/Futilities/archive/master.zip)
+1. .ZIPアーカイブをダウンロードする。
+[Click here](https://github.com/askn37/Futilities/archive/master.zip)
 
 2. ライブラリマネージャで読み込む
 
@@ -32,7 +33,7 @@
 #include <memstat.h>          // メモリ情報
 ```
 
-# リファレンス
+## リファレンス
 
 ほとんどは C言語関数形式である。
 
@@ -44,7 +45,8 @@
 - [16進変換](#hexdigh)
 - [インターバルイベントクラス](#IntervalEventh) (C++)
 - [メモリ情報](#memstath)
-- ~~[ピン変化割込](#pcintvecth)~~ 0.1.5で[PCIntVect](https://github.com/askn37PCIntVect)ライブラリに機能分離
+- ~~[ピン変化割込](#pcintvecth)~~
+  0.1.5で[PCIntVect](https://github.com/askn37/PCIntVect)ライブラリに機能分離
 
 ----
 
@@ -93,7 +95,6 @@ Serial.print(To, 2);
 Serial.println(F(" C"));
 ```
 
-
 ### void openDrain (uint8\_t pin, bool state)
 
 第1引数で示した Arduino デジタルピンを（擬似的な）オープンドレイン出力とみなし、
@@ -121,7 +122,6 @@ openDrain(HIGH) は 入力モードと等価である。
 さらにまたこの状態で使用中のピンに対して
 不用意に pinMode(INPUT_PULLUP) および digitalWrite(HIGH) を実行してはならない。
 適切ではない配線がされている際にこれを行うと、過電流で回路を焼損する恐れがある。
-
 
 この関数は都合により現在はここに仮置きされているが、将来は他のファイルに移動するだろう。
 
@@ -291,9 +291,9 @@ BCD年月日の有効範囲外は正しい値とならない。
 有効範囲外は正しい値とならない。
 表現可能範囲は以下のようになる。
 
-    MJD 40587 == BCD 19700101 == Epoch 0
-    MJD 65442 == BCD 20380119 == Epoch 0x7FFFD280 (24855 day)
-    MJD 90297 == BCD 21060207 == Epoch 0xFFFFA500 (49710 day)
+  MJD 40587 == BCD 19700101 == Epoch 0
+  MJD 65442 == BCD 20380119 == Epoch 0x7FFFD280 (24855 day)
+  MJD 90297 == BCD 21060207 == Epoch 0xFFFFA500 (49710 day)
 
 ### date\_t epochToMjd (const time\_t EPOCH)
 
@@ -343,7 +343,7 @@ epoch を引数にとり、その時分秒を 6桁の文字列表現にして返
 ビット変換
 
 依存性：
-<avr/pgmspace.h>
+&lt;avr/pgmspace.h&gt;
 
 ### uint16\_t wbits (const uint8\_t bits)
 
@@ -387,8 +387,8 @@ INPUT に指定されているならプルアップ抵抗の ON と OFF を切�
 省電力休止と Watchdog Timer
 
 依存性：
-<avr/wdt.h>
-<avr/sleep.h>
+&lt;avr/wdt.h&gt;
+&lt;avr/sleep.h&gt;
 
 注意：
 Leonardo（ATmega32U4）等の USB-UART内臓型では期待したとおりには動作しない。
@@ -478,8 +478,8 @@ Watchdog Timer は停止しない。
 タイムアウトしても MCUデバイスのリセットは発生しない。
 引数には（wdt.hで定義された）以下の定数が指定できる。
 
-    WDTO_15MS WDTO_30MS WDTO_60MS WDTO_120MS
-    WDTO_250MS WDTO_500MS WDTO_1S WDTO_2S WDTO_4S WDTO_8S
+  WDTO_15MS WDTO_30MS WDTO_60MS WDTO_120MS
+  WDTO_250MS WDTO_500MS WDTO_1S WDTO_2S WDTO_4S WDTO_8S
 
 タイムアウトを止めるには wdtStop() を使う。
 
@@ -491,9 +491,9 @@ Watchdog Timer は停止しない。
 
 halt.h では、wdt.h の定義についても利便上以下の別名が使えるようになる。
 
-    wdt_enable()  -> wdtEnable()
-    wdt_disable() -> wdtDisable() or wdtStop() or wdt_stop()
-    wdt_reset()   -> wdtReset()
+  wdt_enable()  -> wdtEnable()
+  wdt_disable() -> wdtDisable() or wdtStop() or wdt_stop()
+  wdt_reset()   -> wdtReset()
 
 wdtEnable() は MCUデバイスのリセットを伴うタイムアウト設定で、
 タイムアウト時間内に wdtReset() を実行しなければ MCUデバイスのリセットが発生する。
@@ -558,7 +558,7 @@ uint8_t a = htod('b');          // 11
 タイマー非依存インターバルイベントクラス
 
 依存性：
-<stdlib.h>
+&lt;stdlib.h&gt;
 
 ### IntervalEvent (void)
 
@@ -666,7 +666,7 @@ while (event.intime()) {
 メモリ情報
 
 依存性：
-<stdlib.h>
+&lt;stdlib.h&gt;
 
 ### size\_t memFreeSize (void)
 
@@ -720,4 +720,4 @@ MIT
 朝日薫 / askn
 (SenseWay Inc.)
 Twitter: [@askn37](https://twitter.com/askn37)
-GitHub: https://github.com/askn37
+GitHub: [https://github.com/askn37](https://github.com/askn37)
