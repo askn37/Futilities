@@ -56,13 +56,13 @@ AD比較変換
 
 依存性：
 
+注意：
+megaAVR-0系 tinyAVR-0/1/2系 では本項目は使用できない。
+
 ### uint16\_t getVcc (void)
 
 VCC入力電圧を測定して返す。
 返値は無符号整数で、精度は 1/1000 Volt の固定小数点3桁である。
-
-注意：
-megaAVR-0系 tinyAVR-0/1/2系 では本項目は使用できない。
 
 ```c
 // #include <adcomp.h>
