@@ -11,6 +11,7 @@
 
 #ifndef __ADCOMP_H
 #define __ADCOMP_H
+#if defined(REFS0)
 
 #include <Arduino.h>
 
@@ -36,6 +37,9 @@ extern void acpAttachInterrupt (uint8_t, void(*)(void), int);
 }
 #endif
 
+#endif
+#else
+#warning nosupported model; REFS0 bit in getVcc()
 #endif
 
 // end of header

@@ -11,6 +11,7 @@
 
 #ifndef __HALT_H
 #define __HALT_H
+#if defined(WDE)
 
 #include <Arduino.h>
 #include <avr/wdt.h>
@@ -54,6 +55,9 @@ extern uint16_t halt (uint16_t = 0, uint8_t = SLEEP_MODE_PWR_DOWN, bool = false)
 }
 #endif
 
+#else
+#warning nosupported WDT_vect
+#endif
 #endif
 
 // end of header

@@ -9,6 +9,7 @@
  *
  */
 
+#if defined(REFS0)
 #include <Arduino.h>
 #include "adcomp.h"
 
@@ -116,6 +117,7 @@ void acpAttachInterrupt (uint8_t pin, void(*callback)(void), int mode) {
         ACSR = acsr;
     }
 }
+#endif
 #endif
 
 // end of code

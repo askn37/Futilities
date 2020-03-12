@@ -19,7 +19,6 @@
 
 #define CONSOLE_BAUD 9600
 
-#define LED_BUILTIN 13
 #define PCINTPIN 8       // D8 --[ PUSH BUTTON ]-- GND
 
 volatile uint16_t wdt_count = 0;

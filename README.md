@@ -61,6 +61,9 @@ AD比較変換
 VCC入力電圧を測定して返す。
 返値は無符号整数で、精度は 1/1000 Volt の固定小数点3桁である。
 
+注意：
+megaAVR-0系 tinyAVR-0/1/2系 では本項目は使用できない。
+
 ```c
 // #include <adcomp.h>
 
@@ -392,6 +395,7 @@ INPUT に指定されているならプルアップ抵抗の ON と OFF を切�
 
 注意：
 Leonardo（ATmega32U4）等の USB-UART内臓型では期待したとおりには動作しない。
+megaAVR-0系 tinyAVR-0/1/2系 では本項目は使用できない。
 
 ### uint16\_t halt (uint16\_t SECONDS = 0, uint8\_t MODE = SLEEP\_MODE\_PWR\_DOWN, bool DEEP = false)
 
@@ -693,6 +697,9 @@ size_t freeSize = memFreeSize();
 - 英文マニュアルが未整備である。
 
 ## 改版履歴
+
+- 9.1.5.1
+  - megaAVR/tinyAVR系選択時に一部無効化されるようにした。
 
 - 0.1.5
   - pcintvect を別ライブラリに除外。
