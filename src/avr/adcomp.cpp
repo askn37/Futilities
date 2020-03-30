@@ -9,9 +9,9 @@
  *
  */
 
-#if defined(REFS0)
+#if defined(ARDUINO_ARCH_AVR)
 #include <Arduino.h>
-#include "adcomp.h"
+#include "avr/adcomp.h"
 
 uint16_t getVcc (void) {
     uint32_t rawVcc = 0;
@@ -41,20 +41,6 @@ uint16_t adc (void){
     while (bit_is_set(ADCSRA, ADSC));
     uint16_t tADC = ADCW;
     return tADC;
-}
-
-void openDrain (uint8_t pin, bool state) {
-    volatile uint8_t *reg = portModeRegister(digitalPinToPort(pin));
-    uint8_t bit = digitalPinToBitMask(pin);
-    if (state) *reg &= ~bit;
-    else       *reg |= bit;
-}
-
-float getThermistor (uint8_t pin, float Tb, float Ta, float Tr, float r1) {
-    int Vt = analogRead(pin);
-    float Rt = r1 * (1023.0 / (float)Vt - 1.0);
-    float Tp = (1 / ( (log(Rt / Tr) ) / Tb + 1 / (273.15 + Ta) )) - 273.15;
-    return Tp;
 }
 
 #ifdef __ADCOMP_ENABLE_ACP

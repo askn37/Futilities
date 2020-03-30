@@ -9,37 +9,20 @@
  *
  */
 
-#ifndef __ADCOMP_H
-#define __ADCOMP_H
-#if defined(REFS0)
-
-#include <Arduino.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void adcSetup (uint8_t data);
-uint16_t adc (void);
-
-extern uint16_t getVcc (void);
-
-extern void openDrain (uint8_t, bool);
-
-extern float getThermistor (uint8_t, float, float, float, float);
-
-#ifdef __ADCOMP_ENABLE_ACP
-void acpSetup (void);
-extern void acpAttachInterrupt (uint8_t, void(*)(void), int);
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif
+#if defined(ARDUINO_ARCH_AVR)
+#include "avr/adcomp.h"
+// #elif defined(ARDUINO_ARCH_SAM)
+// #include "sam/adcomp.h"
+// #elif defined(ARDUINO_ARCH_SAMD)
+// #include "samd/adcomp.h"
+// #elif defined(ARDUINO_ARCH_STM32F4)
+// #include "stm32f4/adcomp.h"
+// #elif defined(ARDUINO_ARCH_NRF52)
+// #include "nrf52/adcomp.h"
+// #elif defined(ARDUINO_ARCH_MEGAAVR)
+// #include "megaavr/adcomp.h"
+// #elif defined(ARDUINO_ARCH_MBED)
+// #include "mbed/adcomp.h"
 #else
-#warning nosupported model; REFS0 bit in getVcc()
+#warning "This library only supports boards with an AVR processor."
 #endif
-
-// end of header

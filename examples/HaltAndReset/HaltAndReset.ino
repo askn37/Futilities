@@ -15,11 +15,11 @@
 // #include <Futilities.h>
 #include <chore.h>
 #include <halt.h>
-#include <pcintvect.h>
+// #include <pcintvect.h>
 
 #define CONSOLE_BAUD 9600
 
-#define PCINTPIN 8       // D8 --[ PUSH BUTTON ]-- GND
+// #define PCINTPIN 8       // D8 --[ PUSH BUTTON ]-- GND
 
 volatile uint16_t wdt_count = 0;
 void ISR_wdt (void) {
@@ -30,12 +30,12 @@ void ISR_wdt (void) {
 
 void setup (void) {
     pinMode(LED_BUILTIN, OUTPUT);
-    pinMode(PCINTPIN, INPUT_PULLUP);
+    // pinMode(PCINTPIN, INPUT_PULLUP);
 
     Serial.begin(CONSOLE_BAUD);
     Serial.println(F("Startup"));
 
-    attachPCInterrupt(PCINTPIN, NULL);
+    // attachPCInterrupt(PCINTPIN, NULL);
 }
 
 void loop (void) {

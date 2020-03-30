@@ -9,14 +9,18 @@
  *
  */
 
-#ifndef __CHORE_H
-#define __CHORE_H
-
-#include <Arduino.h>
-
-#define digitalToggle(outputPin)	\
-    *portInputRegister(digitalPinToPort(outputPin)) |= digitalPinToBitMask(outputPin)
-
+#if defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_MEGAAVR)
+#include "avr/chore.h"
+// #elif defined(ARDUINO_ARCH_SAM)
+// #include "sam/chore.h"
+// #elif defined(ARDUINO_ARCH_SAMD)
+// #include "samd/chore.h"
+// #elif defined(ARDUINO_ARCH_STM32F4)
+// #include "stm32f4/chore.h"
+// #elif defined(ARDUINO_ARCH_NRF52)
+// #include "nrf52/chore.h"
+// #elif defined(ARDUINO_ARCH_MBED)
+// #include "mbed/chore.h"
+#else
+#warning "This library only supports boards with an AVR or MEGAAVR processor."
 #endif
-
-// end of header

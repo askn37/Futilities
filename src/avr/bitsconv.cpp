@@ -9,8 +9,9 @@
  *
  */
 
+#if defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_MEGAAVR)
 #include <Arduino.h>
-#include "bitsconv.h"
+#include "avr/bitsconv.h"
 
 const uint8_t PROGMEM _wide_bits_PGM[] = {
     0b00000000,
@@ -59,5 +60,6 @@ uint8_t rbits (const uint8_t bits) {
                 | (pgm_read_byte(_reverse_bits_PGM + (bits & 15)) << 4);
     return _rev;
 }
+#endif
 
 // end of code
