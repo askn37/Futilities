@@ -23,7 +23,6 @@
 #include <Futilities.h>
 
 // あるいは必要なヘッダファイルだけ
-#include <adcomp.h>           // AD比較変換 (AVR専用)
 #include <bcdtime.h>          // BCD日時変換 (ESP32不可)
 #include <bitsconv.h>         // ビット変換 (AVRとMEGAAVRで動作)
 #include <chore.h>            // 雑役マクロ (AVRとMEGAAVRで動作)
@@ -37,7 +36,6 @@
 
 ほとんどは C言語関数形式である。
 
-- [AD比較変換](#adcomph)
 - [BCD日時変換](#bcdtimeh)
 - [ビット変換](#bitsconvh)
 - [雑役マクロ](#choreh)
@@ -47,32 +45,9 @@
 - [メモリ情報](#memstath)
 - ~~[ピン変化割込](#pcintvecth)~~
   0.1.5で[PCIntVect](https://github.com/askn37/PCIntVect)ライブラリに機能分離
-
-----
-
-## adcomp.h
-
-AD比較変換
-
-依存性：
-
-注意：
-megaAVR-0系 tinyAVR-0/1/2系 では本項目は使用できない。
-
-### uint16\_t getVcc (void)
-
-VCC入力電圧を測定して返す。
-返値は無符号整数で、精度は 1/1000 Volt の固定小数点3桁である。
-
-```c
-// #include <adcomp.h>
-
-uint16_t vcc = getVcc();
-Serial.print(vcc / 1000.0);
-```
-
-MCU（AVR）の VCC絶対定格は 6.0V なので、最大値は 6000 であろう。
-
+- ~~[AD比較変換](#adcomph)~~
+  0.1.6で廃止。[getVcc](https://github.com/askn37/getVcc)ライブラリに一部機能分離
+- [サンプルスケッチ説明](#サンプルスケッチ説明)
 
 ----
 
@@ -689,6 +664,36 @@ size_t freeSize = memFreeSize();
 
 ----
 
+## サンプルスケッチ説明
+
+### BCDTime
+
+bcdtime.h が提供する全関数の挙動を示す。
+
+### FreeMemory
+
+memstat.h の使い方を示す。
+
+### getThermistor
+
+chore.h に含まれる getThermistor() の使い方を示す。
+設定は計測ピン=A0、B定数値=3950、基準温度値=25C、基準抵抗値=20Kohm、分圧抵抗値=20Kohm とする。
+
+### HaltAndReset
+
+halt.h の使い方を示す。10秒毎にLED点滅と休止状態を繰り返し、5回目で CPUリセットを実行する。
+
+### Hexdata
+
+hexdig.h と bitsconv.h が提供する全関数の挙動を示す。
+
+### IntervalEvent
+
+IntervalEvent.h の簡単な使い方を示す。
+LEDを点滅させながら３つのワンショットイベントを順次実行し、終了後にLED点滅もクリアする。
+
+---
+
 ## 既知の不具合／制約／課題
 
 - 主要な AVR 以外はテストされていない。一部は MEGAAVR でも動作する。ESP32 は動作しない。
@@ -700,6 +705,7 @@ size_t freeSize = memFreeSize();
 - 0.1.6
   - 動作対象外のアーキテクチャではコンパイルされないように対応。
   - openDrain() getThermistor() は chore.h へ移動。
+  - getVcc() を廃止、別ライブラリに除外。
 
 - 0.1.5
   - pcintvect を別ライブラリに除外。
