@@ -46,7 +46,7 @@
 - ~~[ピン変化割込](#pcintvecth)~~
   0.1.5で[PCIntVect](https://github.com/askn37/PCIntVect)ライブラリに機能分離
 - ~~[AD比較変換](#adcomph)~~
-  0.1.6で廃止。[getVcc](https://github.com/askn37/getVcc)ライブラリに一部機能分離
+  0.1.6で廃止。[getVcc](https://github.com/askn37/avr_getVcc)ライブラリに一部機能分離
 - [サンプルスケッチ説明](#サンプルスケッチ説明)
 
 ----
