@@ -9,23 +9,18 @@
  *
  */
 
-#ifndef __BITSCONV_H
-#define __BITSCONV_H
-
-#include <Arduino.h>
-#include <avr/pgmspace.h>
-
-#ifdef __cplusplus
-extern "C" {
+#if defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_MEGAAVR)
+#include "avr/bitsconv.h"
+// #elif defined(ARDUINO_ARCH_SAM)
+// #include "sam/bitsconv.h"
+// #elif defined(ARDUINO_ARCH_SAMD)
+// #include "samd/bitsconv.h"
+// #elif defined(ARDUINO_ARCH_STM32F4)
+// #include "stm32f4/bitsconv.h"
+// #elif defined(ARDUINO_ARCH_NRF52)
+// #include "nrf52/bitsconv.h"
+// #elif defined(ARDUINO_ARCH_MBED)
+// #include "mbed/bitsconv.h"
+#else
+#warning "This library only supports boards with an AVR or MEGAAVR processor."
 #endif
-
-extern uint16_t wbits (const uint8_t);
-extern uint8_t rbits (const uint8_t);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif
-
-// end of header

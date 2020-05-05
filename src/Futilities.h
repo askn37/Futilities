@@ -13,7 +13,6 @@
 #define __FUTILITIES_H
 
 #include <Arduino.h>
-#include "adcomp.h"
 #include "bcdtime.h"
 #include "bitsconv.h"
 #include "chore.h"

@@ -1,6 +1,6 @@
 /***************
  *
- * Vcc - Futilities toolbox sample
+ * getThermistor - Futilities toolbox sample
  *
  * target architectures: Atmel AVR (ATmega 328P, 1284P and other)
  *
@@ -12,7 +12,7 @@
 #include <Arduino.h>
 
 // #include <Futilities.h>
-#include <adcomp.h>
+#include <chore.h>
 
 #define CONSOLE_BAUD 9600
 
@@ -23,12 +23,10 @@ void setup (void) {
 }
 
 void loop (void) {
-    uint16_t vcc = getVcc();
+	float To = getThermistor(A0, 3950.0, 25.0, 20.0, 20.0);
 
-    Serial.print(F("Vcc: "));
-    Serial.print(vcc / 1000.0);
-    Serial.print(F(" volt"));
-    Serial.println();
+	Serial.print(To, 2);
+	Serial.println(F(" C"));
 
     delay(5000);
 }

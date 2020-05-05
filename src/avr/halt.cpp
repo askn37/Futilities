@@ -9,8 +9,9 @@
  *
  */
 
+#if defined(ARDUINO_ARCH_AVR)
 #include <Arduino.h>
-#include "halt.h"
+#include "avr/halt.h"
 
 volatile uint8_t __wdt_count = 0;
 void (*__wdt_vect)(void);
@@ -86,6 +87,8 @@ void reboot (void) {
 void wdtAttachInterrupt (void(*callback)(void)) {
     __wdt_vect = callback != NULL ? (void (*)(void)) callback : (void (*)(void)) __wdt_vect_empty;
 }
+
+#endif
 
 // end of code
 

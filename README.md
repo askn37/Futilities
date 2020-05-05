@@ -23,11 +23,10 @@
 #include <Futilities.h>
 
 // あるいは必要なヘッダファイルだけ
-#include <adcomp.h>           // AD比較変換
-#include <bcdtime.h>          // BCD日時変換
-#include <bitsconv.h>         // ビット変換
-#include <chore.h>            // 雑役マクロ
-#include <halt.h>             // 省電力休止と Watchdog Timer
+#include <bcdtime.h>          // BCD日時変換 (ESP32不可)
+#include <bitsconv.h>         // ビット変換 (AVRとMEGAAVRで動作)
+#include <chore.h>            // 雑役マクロ (AVRとMEGAAVRで動作)
+#include <halt.h>             // 省電力休止と Watchdog Timer (AVR専用)
 #include <hexdig.h>           // 16進変換
 #include <IntervalEvent.h>    // インターバルイベントクラス
 #include <memstat.h>          // メモリ情報
@@ -37,7 +36,6 @@
 
 ほとんどは C言語関数形式である。
 
-- [AD比較変換](#adcomph)
 - [BCD日時変換](#bcdtimeh)
 - [ビット変換](#bitsconvh)
 - [雑役マクロ](#choreh)
@@ -47,83 +45,9 @@
 - [メモリ情報](#memstath)
 - ~~[ピン変化割込](#pcintvecth)~~
   0.1.5で[PCIntVect](https://github.com/askn37/PCIntVect)ライブラリに機能分離
-
-----
-
-## adcomp.h
-
-AD比較変換
-
-依存性：
-
-### uint16\_t getVcc (void)
-
-VCC入力電圧を測定して返す。
-返値は無符号整数で、精度は 1/1000 Volt の固定小数点3桁である。
-
-```c
-// #include <adcomp.h>
-
-uint16_t vcc = getVcc();
-Serial.print(vcc / 1000.0);
-```
-
-MCU（AVR）の VCC絶対定格は 6.0V なので、最大値は 6000 であろう。
-
-### float getThermistor (uint8\_t pin, float Tb, float Ta, float Tr, float r1)
-
-NTCサーミスタをADCで読み取って温度（摂氏）を返す。
-引数には 計測ピン、B定数値、基準温度値、基準抵抗値、分圧抵抗値 を与える。
-分圧抵抗器は GND 側に挿入されているものとする。
-計測ピンはアナログ入力ピンでなければならない。
-このピン指定以外の引数は float 型で評価される。
-返値は float 型で返される。
-
-```c
-// MF52E-203J3950A の場合
-// B定数値 = 3950.0 K   (枝番の3950)
-// 基準温度値 = 25.0 C   (枝番のA)
-// 基準抵抗値 = 20.0 KΩ  (枝番の203) (枝番のJは誤差5%の意味)
-// 分圧抵抗 = 20.0 KΩ
-/*
-      Vcc --- [NTC] --+-- [R] -- Gnd
-    (IOREF)           |
-                    A0 Pin
- */
-float To = getThermistor(A0, 3950.0, 25.0, 20.0, 20.0);
-Serial.print(To, 2);
-Serial.println(F(" C"));
-```
-
-### void openDrain (uint8\_t pin, bool state)
-
-第1引数で示した Arduino デジタルピンを（擬似的な）オープンドレイン出力とみなし、
-第2引数で LOW == 吸い込み、HIGH == Hi-Z に設定する。
-
-```c
-// pinMode(A1, INPUT);
-// digitalWrite(A1, LOW);
-
-openDrain(A1, LOW);     // pinMode(A1, OUTPUT) と等価
-
-openDrain(A1, HIGH);    // pinMode(A1, INPUT) と等価
-```
-
-実態としては、openDrain(LOW) は LOW出力モード、
-openDrain(HIGH) は 入力モードと等価である。
-したがって HIGHのときは digitalRead() でピンの状態を読むことができ、
-またワイアードORでの外部回路結線が可能になる。
-しかしながらそれを正しく行うには（AVR内臓のそれではなく）外部回路で適切に
-抵抗値でプルアップされていなければならない。
-
-重要な注意：
-擬似的にオープンドレイン出力動作を作り出しているので、絶対定格を超える電圧は扱えない。
-そしてまた LOW-HIGH 切替の動作速度はかなり遅い。
-さらにまたこの状態で使用中のピンに対して
-不用意に pinMode(INPUT_PULLUP) および digitalWrite(HIGH) を実行してはならない。
-適切ではない配線がされている際にこれを行うと、過電流で回路を焼損する恐れがある。
-
-この関数は都合により現在はここに仮置きされているが、将来は他のファイルに移動するだろう。
+- ~~[AD比較変換](#adcomph)~~
+  0.1.6で廃止。[getVcc](https://github.com/askn37/avr_getVcc)ライブラリに一部機能分離
+- [サンプルスケッチ説明](#サンプルスケッチ説明)
 
 ----
 
@@ -380,6 +304,59 @@ uint8_t bits = rbits(0x00100101);     // 0b10100100
 ピンが OUTPUT に指定されているなら HIGH と LOW を、
 INPUT に指定されているならプルアップ抵抗の ON と OFF を切り替える。
 
+### float getThermistor (uint8\_t pin, float Tb, float Ta, float Tr, float r1)
+
+NTCサーミスタをADCで読み取って温度（摂氏）を返す。
+引数には 計測ピン、B定数値、基準温度値、基準抵抗値、分圧抵抗値 を与える。
+分圧抵抗器は GND 側に挿入されているものとする。
+計測ピンはアナログ入力ピンでなければならない。
+このピン指定以外の引数は float 型で評価される。
+返値は float 型で返される。
+
+```c
+// MF52E-203J3950A の場合
+// B定数値 = 3950.0 K   (枝番の3950)
+// 基準温度値 = 25.0 C   (枝番のA)
+// 基準抵抗値 = 20.0 KΩ  (枝番の203) (枝番のJは誤差5%の意味)
+// 分圧抵抗 = 20.0 KΩ
+/*
+      Vcc --- [NTC] --+-- [R] -- Gnd
+    (IOREF)           |
+                    A0 Pin
+ */
+float To = getThermistor(A0, 3950.0, 25.0, 20.0, 20.0);
+Serial.print(To, 2);
+Serial.println(F(" C"));
+```
+
+### void openDrain (uint8\_t pin, bool state)
+
+第1引数で示した Arduino デジタルピンを（擬似的な）オープンドレイン出力とみなし、
+第2引数で LOW == 吸い込み、HIGH == Hi-Z に設定する。
+
+```c
+// pinMode(A1, INPUT);
+// digitalWrite(A1, LOW);
+
+openDrain(A1, LOW);     // pinMode(A1, OUTPUT) と等価
+
+openDrain(A1, HIGH);    // pinMode(A1, INPUT) と等価
+```
+
+実態としては、openDrain(LOW) は LOW出力モード、
+openDrain(HIGH) は 入力モードと等価である。
+したがって HIGHのときは digitalRead() でピンの状態を読むことができ、
+またワイアードORでの外部回路結線が可能になる。
+しかしながらそれを正しく行うには（AVR内臓のそれではなく）外部回路で適切に
+抵抗値でプルアップされていなければならない。
+
+重要な注意：
+擬似的にオープンドレイン出力動作を作り出しているので、絶対定格を超える電圧は扱えない。
+そしてまた LOW-HIGH 切替の動作速度はかなり遅い。
+さらにまたこの状態で使用中のピンに対して
+不用意に pinMode(INPUT_PULLUP) および digitalWrite(HIGH) を実行してはならない。
+適切ではない配線がされている際にこれを行うと、過電流で回路を焼損する恐れがある。
+
 ----
 
 ## halt.h
@@ -392,6 +369,7 @@ INPUT に指定されているならプルアップ抵抗の ON と OFF を切�
 
 注意：
 Leonardo（ATmega32U4）等の USB-UART内臓型では期待したとおりには動作しない。
+megaAVR-0系 tinyAVR-0/1/2系 では本項目は使用できない。
 
 ### uint16\_t halt (uint16\_t SECONDS = 0, uint8\_t MODE = SLEEP\_MODE\_PWR\_DOWN, bool DEEP = false)
 
@@ -686,13 +664,48 @@ size_t freeSize = memFreeSize();
 
 ----
 
+## サンプルスケッチ説明
+
+### BCDTime
+
+bcdtime.h が提供する全関数の挙動を示す。
+
+### FreeMemory
+
+memstat.h の使い方を示す。
+
+### getThermistor
+
+chore.h に含まれる getThermistor() の使い方を示す。
+設定は計測ピン=A0、B定数値=3950、基準温度値=25C、基準抵抗値=20Kohm、分圧抵抗値=20Kohm とする。
+
+### HaltAndReset
+
+halt.h の使い方を示す。10秒毎にLED点滅と休止状態を繰り返し、5回目で CPUリセットを実行する。
+
+### Hexdata
+
+hexdig.h と bitsconv.h が提供する全関数の挙動を示す。
+
+### IntervalEvent
+
+IntervalEvent.h の簡単な使い方を示す。
+LEDを点滅させながら３つのワンショットイベントを順次実行し、終了後にLED点滅もクリアする。
+
+---
+
 ## 既知の不具合／制約／課題
 
-- 主要な AVR 以外はテストされていない。
+- 主要な AVR 以外はテストされていない。一部は MEGAAVR でも動作する。ESP32 は動作しない。
 - 古い Arduino IDE には対応しない。1.8.5で動作確認。少なくとも C++11 は使えなければならない。
 - 英文マニュアルが未整備である。
 
 ## 改版履歴
+
+- 0.1.6
+  - 動作対象外のアーキテクチャではコンパイルされないように対応。
+  - openDrain() getThermistor() は chore.h へ移動。
+  - getVcc() を廃止、別ライブラリに除外。
 
 - 0.1.5
   - pcintvect を別ライブラリに除外。
